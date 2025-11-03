@@ -1,5 +1,5 @@
 public class Funcionario {
-    private String Nome;
+    private String nome;
     private int idade;
     private String cargo;
 
@@ -7,19 +7,19 @@ public class Funcionario {
         this.nome = nome;
         this.idade = idade;
         this.cargo = cargo;
-
-        public String getNome() {
+    }
+        public String getNome(){
             return nome;
         }
-        public int getIdade() {
+        public int getIdade(){
             return idade;
         }
         public String getCargo(){
-            return titulo;
+            return cargo;
         }
-        public void exibirInfo() {
+        public void exibirInfo(){
             System.out.println("Nome do Funcionario : " + nome);
             System.out.println("Idade do Funcionario: " + idade);
             System.out.println("Cargo do Funcionario: " + cargo);
-    }
-}
+    }}
+

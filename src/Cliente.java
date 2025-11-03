@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class Cliente {
     private String nome;
     private int idade;
@@ -7,8 +8,9 @@ public class Cliente {
         this.nome = nome;
         this.idade = idade;
         this.cpf = cpf;
+    }
+        public void cadastroCliente(){
 
-        public void cadrastoCliente() {
             Scanner input = new Scanner(System.in);
 
             System.out.print("Digite seu Nome: ");
@@ -21,6 +23,6 @@ public class Cliente {
             System.out.print("Digite seu CPF: ");
             cpf = input.nextLine();
 
-            System.out.println("\n Cliente cadastrado com sucesso!\n"
+            System.out.println("\n Cliente cadastrado com sucesso!\n");
     }
 }
