@@ -8,18 +8,18 @@ public class Funcionario {
         this.idade = idade;
         this.cargo = cargo;
     }
-        public String getNome(){
-            return nome;
-        }
-        public int getIdade(){
-            return idade;
-        }
-        public String getCargo(){
-            return cargo;
-        }
-        public void exibirInfo(){
-            System.out.println("Nome do Funcionario : " + nome);
-            System.out.println("Idade do Funcionario: " + idade);
-            System.out.println("Cargo do Funcionario: " + cargo);
-    }}
-
+    public String getNome(){
+        return nome;
+    }
+    public int getIdade(){
+        return idade;
+    }
+    public String getCargo(){
+        return cargo;
+    }
+    public void exibirInfo(){
+        System.out.println("Nome do Funcionario : " + nome);
+        System.out.println("Idade do Funcionario: " + idade);
+        System.out.println("Cargo do Funcionario: " + cargo);
+    }
+}
