@@ -1,19 +1,14 @@
 public class Livro {
     private String titulo;
     private String autor;
-    private int paginas;
     private boolean disponibilidade;
 
-    public Livro(String titulo, String autor, int paginas, boolean disponibilidade) {
+    public Livro(String titulo, String autor, boolean disponibilidade) {
         this.titulo = titulo;
         this.autor = autor;
-        this.paginas = paginas;
         this.disponibilidade = disponibilidade;
     }
 
-    public int getPaginas(){
-        return this.paginas;
-    }
 
     public String getTitulo(){
         return this.titulo;
@@ -34,7 +29,7 @@ public class Livro {
 
     @Override
     public String toString() {
-        return this.titulo + " - " + this.autor + " (" +this.paginas+" paginas)"
+        return this.titulo + " - " + this.autor
                 + ", " + getDisponibilidade();
     }
 }
