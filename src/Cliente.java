@@ -2,27 +2,27 @@ import java.util.Scanner;
 public class Cliente {
     private String nome;
     private int idade;
-    private String cpf;
+    private boolean devendo;
 
-    public Cliente(String nome, int idade, String cpf) {
+    public Cliente(String nome, int idade) {
         this.nome = nome;
         this.idade = idade;
-        this.cpf = cpf;
     }
-    public void cadastroCliente(){
 
-        Scanner input = new Scanner(System.in);
+    public String getNome(){
+        return this.nome;
+    }
 
-        System.out.print("Digite seu Nome: ");
-        nome = input.nextLine();
+    public int getIdade(){
+        return this.idade;
+    }
 
-        System.out.print("Digite sua Idade: ");
-        idade = input.nextInt();
-        input.nextLine();
-
-        System.out.print("Digite seu CPF: ");
-        cpf = input.nextLine();
-
-        System.out.println("\n Cliente cadastrado com sucesso!\n");
+    public String  getStatus(){
+        if (devendo){
+            return "Devendo";
+        }
+        else return "Não está devendo";
     }
 }
+
+//implementar maneira de rastrear qual(is) livro(s) o cliente esta devendo
