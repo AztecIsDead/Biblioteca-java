@@ -1,4 +1,4 @@
-public class Funcionario extends Pessoa {
+public class Funcionario extends Usuario {
     private String cargo;
 
     public Funcionario(String nome, int idade, String cargo) {

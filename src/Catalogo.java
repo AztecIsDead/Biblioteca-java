@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 //classe de interacoes com a database
 public class Catalogo {

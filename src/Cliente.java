@@ -1,20 +1,10 @@
-import java.util.Scanner;
-public class Cliente {
+public class Cliente extends Usuario {
     private String nome;
     private int idade;
     private boolean devendo;
 
     public Cliente(String nome, int idade) {
-        this.nome = nome;
-        this.idade = idade;
-    }
-
-    public String getNome(){
-        return this.nome;
-    }
-
-    public int getIdade(){
-        return this.idade;
+        super(nome,idade);
     }
 
     public String  getStatus(){
@@ -22,6 +12,11 @@ public class Cliente {
             return "Devendo";
         }
         else return "Não está devendo";
+    }
+
+    @Override
+    public String toString() {
+        return getNome() + ", " + getIdade() +", " + getStatus();
     }
 }
 
