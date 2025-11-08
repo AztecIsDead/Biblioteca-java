@@ -1,10 +1,12 @@
-public class Cliente extends Usuario {
+
+public class Cliente extends Usuario implements CSVGravavel {
     private String nome;
     private int idade;
     private boolean devendo;
 
-    public Cliente(String nome, int idade) {
+    public Cliente(String nome, int idade, boolean devendo) {
         super(nome,idade);
+        this.devendo = false;
     }
 
     public String  getStatus(){
@@ -18,6 +20,17 @@ public class Cliente extends Usuario {
     public String toString() {
         return getNome() + ", " + getIdade() +", " + getStatus();
     }
+
+    @Override
+    public String toCSV() {
+        return getNome()+ "," + getIdade() + "," + getStatus();
+    }
+
+    @Override
+    public String getCabecalhoCSV() {
+        return "Nome,Idade,Devendo";
+    }
+
 }
 
 //implementar maneira de rastrear qual(is) livro(s) o cliente esta devendo

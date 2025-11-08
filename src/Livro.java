@@ -1,4 +1,4 @@
-public class Livro {
+public class Livro implements CSVGravavel {
     private String titulo;
     private String autor;
     private boolean disponibilidade;
@@ -26,10 +26,15 @@ public class Livro {
             return "Indisponível";
         }
     }
+    @Override
+    public String toCSV() {
+        return titulo + "," + autor + "," + getDisponibilidade();
+    }
 
     @Override
-    public String toString() {
-        return this.titulo + " - " + this.autor
-                + ", " + getDisponibilidade();
+    public String getCabecalhoCSV() {
+        return "Titulo,Autor,Disponibilidade";
     }
+
+    
 }

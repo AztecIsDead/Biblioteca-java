@@ -1,4 +1,4 @@
-public class Funcionario extends Usuario {
+public class Funcionario extends Usuario implements CSVGravavel {
     private String cargo;
 
     public Funcionario(String nome, int idade, String cargo) {
@@ -14,4 +14,17 @@ public class Funcionario extends Usuario {
     public String toString() {
         return getNome() + ", " + getIdade() + ", " + getCargo();
     }
+
+    @Override
+    public String toCSV() {
+        return getNome() + "," + getIdade() + "," + cargo;
+    }
+
+    @Override
+    public String getCabecalhoCSV() {
+        return "Nome,Cargo,Salario";
+    }
+
+
+
 }
