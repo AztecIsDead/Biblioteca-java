@@ -4,10 +4,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CSVUtil {
-      public static <T extends CSVGravavel> void gravarCSV(List<T> lista, String caminhoArquivo) {
+      public static <T extends CSVGravavel> void gravarCSV(ArrayList<T> lista, String caminhoArquivo) {
         if (lista == null || lista.isEmpty()) {
             System.out.println("Lista vazia, nada a gravar.");
             return;
@@ -32,8 +31,8 @@ public class CSVUtil {
         }
     }
 
-     public static <T> List<T> lerCSV(String caminhoArquivo, Class<T> tipoClasse) {
-        List<T> lista = new ArrayList<>();
+     public static <T> ArrayList<T> lerCSV(String caminhoArquivo, Class<T> tipoClasse) {
+        ArrayList<T> lista = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo))) {
             String linha;

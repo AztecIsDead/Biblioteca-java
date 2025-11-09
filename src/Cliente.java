@@ -9,11 +9,15 @@ public class Cliente extends Usuario implements CSVGravavel {
         this.status = false;
     }
 
-    public String  getStatus(){
+    public String getStatus(){
         if (status){
             return "Devendo";
         }
         else return "Não está devendo";
+    }
+
+    public void setStatus(boolean status){
+        this.status = status;
     }
 
     @Override

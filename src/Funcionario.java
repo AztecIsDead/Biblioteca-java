@@ -10,6 +10,10 @@ public class Funcionario extends Usuario implements CSVGravavel {
         return this.cargo;
     }
 
+    public void setCargo(String cargo){
+        this.cargo = cargo;
+    }
+
     @Override
     public String toString() {
         return getNome() + ", " + getIdade() + " anos - " + getCargo();
