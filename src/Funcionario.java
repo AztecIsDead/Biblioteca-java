@@ -12,19 +12,17 @@ public class Funcionario extends Usuario implements CSVGravavel {
 
     @Override
     public String toString() {
-        return getNome() + ", " + getIdade() + ", " + getCargo();
+        return getNome() + ", " + getIdade() + " anos - " + getCargo();
     }
 
     @Override
     public String toCSV() {
-        return getNome() + "," + getIdade() + "," + cargo;
+        return getNome() + "," + getIdade() + "," + getCargo();
     }
 
     @Override
     public String getCabecalhoCSV() {
-        return "Nome,Cargo,Salario";
+        return "Nome,Idade,Cargo,Salario";
     }
-
-
 
 }

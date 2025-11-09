@@ -51,7 +51,7 @@ public class CSVUtil {
                     String nome = campos[0];
                     int idade = Integer.parseInt(campos[1]);
                     String cargo = campos[2];
-                    lista.add(tipoClasse.cast(new Funcionario(nome,idade, cargo)));
+                    lista.add(tipoClasse.cast(new Funcionario(nome, idade, cargo)));
                 }
 
                 else if (tipoClasse == Cliente.class) {

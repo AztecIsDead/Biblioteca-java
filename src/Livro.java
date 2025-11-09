@@ -18,7 +18,11 @@ public class Livro implements CSVGravavel {
         return this.autor;
     }
 
-    public String getDisponibilidade(){
+    public boolean getDisponibilidade(){
+        return this.disponibilidade;
+    }
+
+    public String getDisponibilidadeString(){
         if (this.disponibilidade){
             return "Disponível";
         }
@@ -26,9 +30,15 @@ public class Livro implements CSVGravavel {
             return "Indisponível";
         }
     }
+
+    @Override
+    public String toString(){
+        return getTitulo() + "," + getAutor() + "," + getDisponibilidadeString();
+    }
+
     @Override
     public String toCSV() {
-        return titulo + "," + autor + "," + getDisponibilidade();
+        return getTitulo() + "," + getAutor() + "," + getDisponibilidade();
     }
 
     @Override
@@ -36,5 +46,4 @@ public class Livro implements CSVGravavel {
         return "Titulo,Autor,Disponibilidade";
     }
 
-    
 }

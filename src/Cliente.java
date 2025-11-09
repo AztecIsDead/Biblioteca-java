@@ -2,15 +2,15 @@
 public class Cliente extends Usuario implements CSVGravavel {
     private String nome;
     private int idade;
-    private boolean devendo;
+    private boolean status;
 
-    public Cliente(String nome, int idade, boolean devendo) {
+    public Cliente(String nome, int idade, boolean status) {
         super(nome,idade);
-        this.devendo = false;
+        this.status = false;
     }
 
     public String  getStatus(){
-        if (devendo){
+        if (status){
             return "Devendo";
         }
         else return "Não está devendo";
@@ -28,7 +28,7 @@ public class Cliente extends Usuario implements CSVGravavel {
 
     @Override
     public String getCabecalhoCSV() {
-        return "Nome,Idade,Devendo";
+        return "Nome,Idade,Status";
     }
 
 }
