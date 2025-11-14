@@ -9,6 +9,18 @@ public class Catalogo {
     ArrayList<Funcionario> funcionariosCadastrados = CSVUtil.lerCSV("funcionarios.csv", Funcionario.class);
     ArrayList<Cliente> clientesCadastrados = CSVUtil.lerCSV("clientes.csv", Cliente.class);
 
+    public ArrayList<Livro> getLivros(){
+        return catalogoLivros;
+    }
+
+    public ArrayList<Funcionario> getFuncionariosCadastrados(){
+        return funcionariosCadastrados;
+    }
+
+    public ArrayList<Cliente> getClientesCadastrados(){
+        return clientesCadastrados;
+    }
+
     public void registrarLivro(){
         Scanner scanner = new Scanner(System.in);
         Livro livro = new Livro("Titulo", "Autor", true);
@@ -128,8 +140,8 @@ public class Catalogo {
             }
         }
         return funcionariosEncontrados;
-
     }
+
     public ArrayList<Funcionario> buscarFuncionarioCargo(String cargo){
         ArrayList<Funcionario> funcionariosEncontrados = new ArrayList<>();
         for (Funcionario f : funcionariosCadastrados){

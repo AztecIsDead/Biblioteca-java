@@ -1,7 +1,4 @@
-
 public class Cliente extends Usuario implements CSVGravavel {
-    private String nome;
-    private int idade;
     private boolean status;
 
     public Cliente(String nome, int idade, boolean status) {
@@ -9,25 +6,25 @@ public class Cliente extends Usuario implements CSVGravavel {
         this.status = false;
     }
 
-    public String getStatus(){
+    public String getStatusDevendo(){
         if (status){
             return "Devendo";
         }
         else return "Não está devendo";
     }
 
-    public void setStatus(boolean status){
+    public void setStatusDevendo(boolean status){
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return getNome() + ", " + getIdade() +", " + getStatus();
+        return getNome() + ", " + getIdade() +", " + getStatusDevendo();
     }
 
     @Override
     public String toCSV() {
-        return getNome()+ "," + getIdade() + "," + getStatus();
+        return getNome()+ "," + getIdade() + "," + getStatusDevendo();
     }
 
     @Override

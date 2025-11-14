@@ -26,7 +26,7 @@ public class Funcionario extends Usuario implements CSVGravavel {
 
     @Override
     public String getCabecalhoCSV() {
-        return "Nome,Idade,Cargo,Salario";
+        return "Nome,Idade,Cargo";
     }
 
 }
