@@ -71,6 +71,10 @@ public class CSVUtil {
         } catch (IOException e) {
             System.out.println("Erro ao ler o CSV: " + e.getMessage());
         }
+        catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Erro ao ler arquivo CSV vazio. " + e.getMessage());
+            System.out.println("Essa função retornará apenas listas vazias enquanto o erro persistir.");
+        }
 
         return lista;
     }

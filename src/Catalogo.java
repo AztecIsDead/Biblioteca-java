@@ -3,12 +3,15 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
-//classe de interacoes com a database
+//classe de interações com a "database"
 public class Catalogo {
+    ArrayList<Livro> catalogoLivros = CSVUtil.lerCSV("livros.csv", Livro.class);
+    ArrayList<Funcionario> funcionariosCadastrados = CSVUtil.lerCSV("funcionarios.csv", Funcionario.class);
+    ArrayList<Cliente> clientesCadastrados = CSVUtil.lerCSV("clientes.csv", Cliente.class);
+
     public void registrarLivro(){
-        ArrayList<Livro> catalagoLivros = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
-        Livro livro = new Livro("Titulo", "Autor", false);
+        Livro livro = new Livro("Titulo", "Autor", true);
 
         System.out.println("Digite o título do livro:");
         String titulo = scanner.nextLine();
@@ -18,18 +21,17 @@ public class Catalogo {
         String autor = scanner.nextLine();
         livro.setAutor(autor);
 
-        catalagoLivros.add(livro);
+        catalogoLivros.add(livro);
 
         System.out.println("livro registrado com sucesso!");
 
-        CSVUtil.gravarCSV(catalagoLivros, "livros.csv");
+        CSVUtil.gravarCSV(catalogoLivros, "livros.csv");
     }
 
     public void registrarFuncionario(){
         boolean inputValido = false;
         int idade = 0;
 
-        ArrayList<Funcionario> funcionarios = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         Funcionario funcionario = new Funcionario("Nome", idade, "cargo");
 
@@ -53,17 +55,16 @@ public class Catalogo {
         String cargo = scanner.nextLine();
         funcionario.setCargo(cargo);
 
-        funcionarios.add(funcionario);
+        funcionariosCadastrados.add(funcionario);
         System.out.println("Funcionário registrado com sucesso!");
 
-        CSVUtil.gravarCSV(funcionarios, "funcionarios.csv");
+        CSVUtil.gravarCSV(funcionariosCadastrados, "funcionarios.csv");
     }
 
     public void registrarCliente(){
         boolean inputValido = false;
         int idade = 0;
 
-        ArrayList<Cliente> clientes = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         Cliente cliente = new Cliente("Nome", idade, false);
 
@@ -83,9 +84,59 @@ public class Catalogo {
                 scanner.nextLine();
             }
         }
-        clientes.add(cliente);
+        clientesCadastrados.add(cliente);
         System.out.println("Cliente registrado com sucesso!");
 
-        CSVUtil.gravarCSV(clientes, "clientes.csv");
+        CSVUtil.gravarCSV(clientesCadastrados, "clientes.csv");
+    }
+
+    public ArrayList<Livro> buscarLivroTitulo(String titulo){
+        ArrayList<Livro> livrosEncontrados = new ArrayList<>();
+        for (Livro l : catalogoLivros){
+            if (l.getTitulo().equalsIgnoreCase(titulo)){
+                livrosEncontrados.add(l);
+            }
+        }
+        return livrosEncontrados;
+    }
+
+    public ArrayList<Livro> buscarLivroAutor(String autor){
+        ArrayList<Livro> livrosEncontrados = new ArrayList<>();
+        for (Livro l : catalogoLivros){
+            if (l.getAutor().equalsIgnoreCase(autor)){
+                livrosEncontrados.add(l);
+            }
+        }
+        return livrosEncontrados;
+    }
+
+    public ArrayList<Cliente> buscarClienteNome(String nome){
+        ArrayList<Cliente> clientesEncontrados = new ArrayList<>();
+        for (Cliente c : clientesCadastrados){
+            if (c.getNome().equalsIgnoreCase(nome)){
+                clientesEncontrados.add(c);
+            }
+        }
+        return clientesEncontrados;
+    }
+
+    public ArrayList<Funcionario> buscarFuncionarioNome(String nome){
+        ArrayList<Funcionario> funcionariosEncontrados = new ArrayList<>();
+        for (Funcionario f : funcionariosCadastrados){
+            if (f.getNome().equalsIgnoreCase(nome)){
+                funcionariosEncontrados.add(f);
+            }
+        }
+        return funcionariosEncontrados;
+
+    }
+    public ArrayList<Funcionario> buscarFuncionarioCargo(String cargo){
+        ArrayList<Funcionario> funcionariosEncontrados = new ArrayList<>();
+        for (Funcionario f : funcionariosCadastrados){
+            if (f.getCargo().equalsIgnoreCase(cargo)){
+                funcionariosEncontrados.add(f);
+            }
+        }
+        return funcionariosEncontrados;
     }
 }
