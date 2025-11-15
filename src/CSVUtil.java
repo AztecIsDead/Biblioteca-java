@@ -15,7 +15,7 @@ public class CSVUtil {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
 
             // Cabeçalho
-            writer.write(lista.get(0).getCabecalhoCSV());
+            writer.write(lista.getFirst().getCabecalhoCSV());
             writer.newLine();
 
             // Dados
@@ -57,7 +57,8 @@ public class CSVUtil {
                     String nome = campos[0];
                     int idade = Integer.parseInt(campos[1]);
                     boolean devendo = Boolean.parseBoolean(campos[2]);
-                    lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo)));
+                    String livroAlugado = campos[3];
+                    lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado)));
                 }
 
                 else if (tipoClasse == Livro.class) {

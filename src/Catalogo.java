@@ -9,7 +9,7 @@ public class Catalogo {
     ArrayList<Funcionario> funcionariosCadastrados = CSVUtil.lerCSV("funcionarios.csv", Funcionario.class);
     ArrayList<Cliente> clientesCadastrados = CSVUtil.lerCSV("clientes.csv", Cliente.class);
 
-    public ArrayList<Livro> getLivros(){
+    public ArrayList<Livro> getCatalogoLivros(){
         return catalogoLivros;
     }
 
@@ -19,6 +19,14 @@ public class Catalogo {
 
     public ArrayList<Cliente> getClientesCadastrados(){
         return clientesCadastrados;
+    }
+
+    public void atualizarClientes(){
+        CSVUtil.gravarCSV(clientesCadastrados, "clientes.csv");
+    }
+
+    public void atualizarCatalogo(){
+        CSVUtil.gravarCSV(catalogoLivros, "livros.csv");
     }
 
     public void registrarLivro(){
@@ -37,7 +45,7 @@ public class Catalogo {
 
         System.out.println("livro registrado com sucesso!");
 
-        CSVUtil.gravarCSV(catalogoLivros, "livros.csv");
+        atualizarCatalogo();
     }
 
     public void registrarFuncionario(){
@@ -55,7 +63,7 @@ public class Catalogo {
             System.out.println("Digite a idade do funcionario:");
             try {
                 idade = scanner.nextInt();
-                inputValido = true;
+                inputValido = idade > 0;
                 funcionario.setIdade(idade);
                 scanner.nextLine();
             } catch (InputMismatchException e) {
@@ -68,6 +76,7 @@ public class Catalogo {
         funcionario.setCargo(cargo);
 
         funcionariosCadastrados.add(funcionario);
+
         System.out.println("Funcionário registrado com sucesso!");
 
         CSVUtil.gravarCSV(funcionariosCadastrados, "funcionarios.csv");
@@ -78,7 +87,7 @@ public class Catalogo {
         int idade = 0;
 
         Scanner scanner = new Scanner(System.in);
-        Cliente cliente = new Cliente("Nome", idade, false);
+        Cliente cliente = new Cliente("Nome", idade, false, "Nenhum");
 
         System.out.println("Digite o nome do cliente:");
         String nome = scanner.nextLine();
@@ -88,7 +97,7 @@ public class Catalogo {
             System.out.println("Digite a idade do cliente:");
             try {
                 idade = scanner.nextInt();
-                inputValido = true;
+                inputValido = idade > 0;
                 cliente.setIdade(idade);
                 scanner.nextLine();
             } catch (InputMismatchException e) {
@@ -99,37 +108,34 @@ public class Catalogo {
         clientesCadastrados.add(cliente);
         System.out.println("Cliente registrado com sucesso!");
 
-        CSVUtil.gravarCSV(clientesCadastrados, "clientes.csv");
+        atualizarClientes();
     }
 
-    public ArrayList<Livro> buscarLivroTitulo(String titulo){
-        ArrayList<Livro> livrosEncontrados = new ArrayList<>();
+    public Livro buscarLivroTitulo(String titulo){
         for (Livro l : catalogoLivros){
             if (l.getTitulo().equalsIgnoreCase(titulo)){
-                livrosEncontrados.add(l);
+                return l;
             }
         }
-        return livrosEncontrados;
+        return null;
     }
 
-    public ArrayList<Livro> buscarLivroAutor(String autor){
-        ArrayList<Livro> livrosEncontrados = new ArrayList<>();
+    public Livro buscarLivroAutor(String autor){
         for (Livro l : catalogoLivros){
-            if (l.getAutor().equalsIgnoreCase(autor)){
-                livrosEncontrados.add(l);
+            if (l.getTitulo().equalsIgnoreCase(autor)){
+                return l;
             }
         }
-        return livrosEncontrados;
+        return null;
     }
 
-    public ArrayList<Cliente> buscarClienteNome(String nome){
-        ArrayList<Cliente> clientesEncontrados = new ArrayList<>();
+    public Cliente buscarClienteNome(String nome){
         for (Cliente c : clientesCadastrados){
             if (c.getNome().equalsIgnoreCase(nome)){
-                clientesEncontrados.add(c);
+                return c;
             }
         }
-        return clientesEncontrados;
+        return null;
     }
 
     public ArrayList<Funcionario> buscarFuncionarioNome(String nome){
