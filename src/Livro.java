@@ -37,11 +37,8 @@ public class Livro implements CSVGravavel {
         return this.disponibilidade;
     }
 
-    @Override
     public String toString(){
-        if (getDisponibilidade()){
-        return getTitulo() + "," + getAutor() + "," + "Disponível";
-        }
+        if (getDisponibilidade()) return getTitulo() + "," + getAutor() + "," + "Disponível";
         return getTitulo() + "," + getAutor() + "," + "Indisponível";
     }
 
