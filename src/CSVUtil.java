@@ -3,12 +3,16 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class CSVUtil {
+    private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
+
     public static <T extends CSVGravavel> void gravarCSV(ArrayList<T> lista, String caminhoArquivo) {
         if (lista == null || lista.isEmpty()) {
-            System.out.println("Lista vazia, nada a gravar.");
+            System.out.println("Lista vazia, nada a gravar: " + caminhoArquivo);
             return;
         }
 
@@ -24,7 +28,6 @@ public class CSVUtil {
             System.out.println("Erro ao gravar o CSV: " + e.getMessage());
         }
     }
-
     public static <T> ArrayList<T> lerCSV(String caminhoArquivo, Class<T> tipoClasse) {
         ArrayList<T> lista = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo))) {
@@ -49,7 +52,8 @@ public class CSVUtil {
                         int idade = Integer.parseInt(campos[1]);
                         boolean devendo = Boolean.parseBoolean(campos[2]);
                         String livroAlugado = campos.length > 3 ? campos[3] : "Nenhum";
-                        lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado)));
+                        String senha = campos.length > 4 ? campos[4] : "";
+                        lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado == null || livroAlugado.isEmpty() ? "Nenhum" : livroAlugado, senha)));
                     } catch (Exception e) {
                         System.out.println("Linha de Cliente inválida, pulando: " + e.getMessage());
                     }
@@ -62,13 +66,25 @@ public class CSVUtil {
                     } catch (Exception e) {
                         System.out.println("Linha de Livro inválida, pulando: " + e.getMessage());
                     }
+                } else if (tipoClasse == Request.class) {
+                    try {
+                        String cliente = campos[0];
+                        String titulo = campos[1];
+                        Request.Status st = Request.Status.valueOf(campos[2]);
+                        LocalDate due = null;
+                        if (campos.length > 3 && !campos[3].trim().isEmpty()) {
+                            due = LocalDate.parse(campos[3], F);
+                        }
+                        lista.add(tipoClasse.cast(new Request(cliente, titulo, st, due)));
+                    } catch (Exception e) {
+                        System.out.println("Linha de Request inválida, pulando: " + e.getMessage());
+                    }
                 }
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o CSV: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Erro ao ler arquivo CSV vazio. " + e.getMessage());
-            System.out.println("Essa função retornará apenas listas vazias enquanto o erro persistir.");
         }
         return lista;
     }

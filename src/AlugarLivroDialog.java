@@ -1,8 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlugarLivroDialog extends JDialog {
     private JComboBox<String> cbClientes;
@@ -21,15 +18,9 @@ public class AlugarLivroDialog extends JDialog {
     private void initComponents() {
         cbClientes = new JComboBox<>();
         cbLivrosDisponiveis = new JComboBox<>();
-        for (Cliente c : catalogo.getClientesCadastrados()) {
-            cbClientes.addItem(c.getNome());
-        }
 
-        for (Livro l : catalogo.getCatalogoLivros()) {
-            if (l.getDisponibilidade()) {
-                cbLivrosDisponiveis.addItem(l.getTitulo());
-            }
-        }
+        for (Cliente c : catalogo.getClientesCadastrados()) cbClientes.addItem(c.getNome());
+        for (Livro l : catalogo.getCatalogoLivros()) if (l.getDisponibilidade()) cbLivrosDisponiveis.addItem(l.getTitulo());
 
         JPanel p = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -43,10 +34,10 @@ public class AlugarLivroDialog extends JDialog {
         c.gridx = 1; p.add(cbLivrosDisponiveis, c);
 
         JButton btnOk = new JButton("Alugar");
-        btnOk.addActionListener((ActionEvent e) -> onAlugar());
+        btnOk.addActionListener(e -> onAlugar());
 
         JButton btnCancel = new JButton("Cancelar");
-        btnCancel.addActionListener((ActionEvent e) -> onCancel());
+        btnCancel.addActionListener(e -> onCancel());
 
         JPanel bp = new JPanel();
         bp.add(btnOk);
@@ -70,13 +61,38 @@ public class AlugarLivroDialog extends JDialog {
             return;
         }
 
-        boolean ok = catalogo.alugarLivroParaCliente(nomeCliente, tituloLivro);
+        // pergunta o tipo de operação
+        String[] options = {"Imediato (sem due date)", "Com prazo (definir dias)", "Cancelar"};
+        int opt = JOptionPane.showOptionDialog(
+                this,
+                "Escolha o tipo de aluguel:",
+                "Tipo de aluguel",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (opt == 2 || opt == JOptionPane.CLOSED_OPTION) return;
+
+        boolean ok = false;
+        if (opt == 0) { // imediato
+            ok = catalogo.alugarLivroParaCliente(nomeCliente, tituloLivro);
+        } else if (opt == 1) { // com prazo -> pergunta dias e usa approveRequest
+            String s = JOptionPane.showInputDialog(this, "Prazo em dias (ex: 14):", "14");
+            if (s == null) return;
+            int days = 14;
+            try { days = Integer.parseInt(s); } catch (Exception ex) { days = 14; }
+            ok = catalogo.approveRequest(nomeCliente, tituloLivro, days);
+        }
+
         if (ok) {
-            JOptionPane.showMessageDialog(this, "Livro alugado com sucesso para " + nomeCliente + "!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operação realizada com sucesso para " + nomeCliente + "!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             confirmado = true;
             setVisible(false);
         } else {
-            JOptionPane.showMessageDialog(this, "Não foi possível alugar. Verifique cliente/livro.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Não foi possível completar a operação. Verifique cliente/livro/estado.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 

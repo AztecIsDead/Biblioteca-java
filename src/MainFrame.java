@@ -18,46 +18,45 @@ public class MainFrame extends JFrame {
     private FuncionarioModeloDeTable funcionarioTableModel;
     private JTable funcionarioTable;
 
+    private RequestTableModel requestTableModel;
+    private JTable requestTable;
+
     public MainFrame() {
-        super("Sistema Biblioteca - Swing");
+        super("Sistema Biblioteca - Swing (Admin)");
         livroService = new LivroService();
         clienteService = new ClienteService();
         funcionarioService = new FuncionarioService();
         initUI();
         loadAllInBackground();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(1000, 650);
         setLocationRelativeTo(null);
     }
-
     private void initUI() {
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Livros", criarPainelLivros());
         tabs.addTab("Clientes", criarPainelClientes());
         tabs.addTab("Funcionários", criarPainelFuncionarios());
+        tabs.addTab("Pedidos", criarPainelPedidos());
         getContentPane().add(tabs, BorderLayout.CENTER);
     }
-
     private JPanel criarPainelLivros() {
         JPanel panel = new JPanel(new BorderLayout());
         livroTableModel = new LivroModeloDeTable(livroService.findAll());
         livroTable = new JTable(livroTableModel);
         livroTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel.add(new JScrollPane(livroTable), BorderLayout.CENTER);
-
         JButton novo = new JButton("Novo");
         novo.addActionListener(e -> onNovoLivro());
         JButton editar = new JButton("Editar");
         editar.addActionListener(e -> onEditarLivro());
         JButton excluir = new JButton("Excluir");
         excluir.addActionListener(e -> onExcluirLivro());
-
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(novo); top.add(editar); top.add(excluir);
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
-
     private void onNovoLivro() {
         LivroFormDialog dlg = new LivroFormDialog(this);
         dlg.setLivro(null);
@@ -70,7 +69,6 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
-
     private void onEditarLivro() {
         int row = livroTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
@@ -86,7 +84,6 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
-
     private void onExcluirLivro() {
         int row = livroTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
@@ -112,15 +109,13 @@ public class MainFrame extends JFrame {
         editar.addActionListener(e -> onEditarCliente());
         JButton excluir = new JButton("Excluir");
         excluir.addActionListener(e -> onExcluirCliente());
-
         JToggleButton filtrarDevedores = new JToggleButton("Mostrar apenas devedores");
         filtrarDevedores.addActionListener(e -> {
             mostrarApenasDevedores = filtrarDevedores.isSelected();
             atualizarClientesNaTabela();
         });
-        JButton btnAlugar = new JButton("Alugar Livro");
+        JButton btnAlugar = new JButton("Alugar livro (imediato)");
         btnAlugar.addActionListener(e -> onAlugarLivro());
-
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(novo); top.add(editar); top.add(excluir); top.add(filtrarDevedores); top.add(btnAlugar);
         panel.add(top, BorderLayout.NORTH);
@@ -138,10 +133,8 @@ public class MainFrame extends JFrame {
                     String livroEscolhido = novo.getLivroAlugado();
                     if (livroEscolhido != null && !livroEscolhido.equalsIgnoreCase("Nenhum")) {
                         Catalogo c = new Catalogo();
-                        boolean ok = c.alugarLivroParaCliente(novo.getNome(), livroEscolhido);
-                        if (!ok) {
-                            System.out.println("Aluguel falhou para " + novo.getNome() + " / " + livroEscolhido);
-                        }
+                        boolean ok = c.approveRequest(novo.getNome(), livroEscolhido, 14); // aprova direto com 14 dias
+                        if (!ok) System.out.println("Falha em aprovar aluguel direto ao criar cliente.");
                     }
                     return null;
                 }
@@ -183,10 +176,8 @@ public class MainFrame extends JFrame {
                         }
                     }
                     if (!"Nenhum".equalsIgnoreCase(livroNovo) && !livroNovo.equalsIgnoreCase(livroAntigo)) {
-                        boolean ok = c.alugarLivroParaCliente(atualizado.getNome(), livroNovo);
-                        if (!ok) {
-                            System.out.println("Falha ao alugar novo livro: " + livroNovo + " para " + atualizado.getNome());
-                        }
+                        boolean ok = c.approveRequest(atualizado.getNome(), livroNovo, 14);
+                        if (!ok) System.out.println("Falha ao aprovar novo livro para " + atualizado.getNome());
                     }
                     return null;
                 }
@@ -206,22 +197,36 @@ public class MainFrame extends JFrame {
         int r = JOptionPane.showConfirmDialog(this, "Excluir cliente \""+c.getNome()+"\"?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             new SwingWorker<Void, Void>() {
-                @Override protected Void doInBackground() { new ClienteService().delete(c); return null; }
-                @Override protected void done() { clienteService.loadAll(); atualizarClientesNaTabela(); }
+                @Override protected Void doInBackground() {
+                    Catalogo cat = new Catalogo();
+                    Cliente fromFile = cat.buscarClienteNome(c.getNome());
+                    if (fromFile != null) {
+                        String livro = fromFile.getLivroAlugado();
+                        if (livro != null && !livro.equalsIgnoreCase("Nenhum")) {
+                            Livro l = cat.buscarLivroTitulo(livro);
+                            if (l != null) { l.setDisponibilidade(true); cat.atualizarCatalogo(); }
+                        }
+                    }
+                    new ClienteService().delete(c);
+                    return null;
+                }
+                @Override protected void done() {
+                    clienteService.loadAll();
+                    livroService.loadAll();
+                    atualizarClientesNaTabela();
+                    livroTableModel.setLivros(livroService.findAll());
+                }
             }.execute();
         }
     }
-
     private void atualizarClientesNaTabela() {
-        if (!mostrarApenasDevedores) {
-            clienteTableModel.setClientes(clienteService.findAll());
-        } else {
-            List<Cliente> devedores = clienteService.findAll().stream()
-                    .filter(Cliente::getStatusDevendo)
-                    .collect(Collectors.toList());
+        if (!mostrarApenasDevedores) clienteTableModel.setClientes(clienteService.findAll());
+        else {
+            List<Cliente> devedores = clienteService.findAll().stream().filter(Cliente::getStatusDevendo).collect(Collectors.toList());
             clienteTableModel.setClientes(devedores);
         }
     }
+
     private void onAlugarLivro() {
         AlugarLivroDialog dlg = new AlugarLivroDialog(this);
         dlg.setVisible(true);
@@ -246,7 +251,6 @@ public class MainFrame extends JFrame {
         funcionarioTable = new JTable(funcionarioTableModel);
         funcionarioTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel.add(new JScrollPane(funcionarioTable), BorderLayout.CENTER);
-
         JButton novo = new JButton("Novo");
         novo.addActionListener(e -> onNovoFuncionario());
         JButton editar = new JButton("Editar");
@@ -259,7 +263,6 @@ public class MainFrame extends JFrame {
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
-
     private void onNovoFuncionario() {
         FuncionarioFormDialog dlg = new FuncionarioFormDialog(this);
         dlg.setFuncionario(null);
@@ -272,7 +275,6 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
-
     private void onEditarFuncionario() {
         int row = funcionarioTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um funcionário."); return; }
@@ -288,7 +290,6 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
-
     private void onExcluirFuncionario() {
         int row = funcionarioTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um funcionário."); return; }
@@ -299,6 +300,67 @@ public class MainFrame extends JFrame {
                 @Override protected Void doInBackground() { new FuncionarioService().delete(f); return null; }
                 @Override protected void done() { funcionarioService.loadAll(); funcionarioTableModel.setFuncionarios(funcionarioService.findAll()); }
             }.execute();
+        }
+    }
+    private JPanel criarPainelPedidos() {
+        JPanel panel = new JPanel(new BorderLayout());
+        requestTableModel = new RequestTableModel(new java.util.ArrayList<>());
+        requestTable = new JTable(requestTableModel);
+        requestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel.add(new JScrollPane(requestTable), BorderLayout.CENTER);
+
+        JButton btnRefresh = new JButton("Atualizar");
+        btnRefresh.addActionListener(e -> loadRequests());
+
+        JButton btnAprovar = new JButton("Aprovar");
+        btnAprovar.addActionListener(e -> onAprovarPedido());
+
+        JButton btnRejeitar = new JButton("Rejeitar");
+        btnRejeitar.addActionListener(e -> onRejeitarPedido());
+
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        top.add(btnRefresh); top.add(btnAprovar); top.add(btnRejeitar);
+        panel.add(top, BorderLayout.NORTH);
+
+        return panel;
+    }
+    private void loadRequests() {
+        Catalogo c = new Catalogo();
+        java.util.List<Request> pendentes = c.getPendingRequests();
+        requestTableModel.setRequests(pendentes);
+    }
+    private void onAprovarPedido() {
+        int row = requestTable.getSelectedRow();
+        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um pedido."); return; }
+        Request r = requestTableModel.getRequestAt(row);
+        String s = JOptionPane.showInputDialog(this, "Prazo em dias (ex: 14):", "14");
+        if (s == null) return;
+        int days = 14;
+        try { days = Integer.parseInt(s); } catch (Exception ex) { days = 14; }
+        Catalogo c = new Catalogo();
+        boolean ok = c.approveRequest(r.getClienteNome(), r.getTituloLivro(), days);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Pedido aprovado. Livro e cliente atualizados.");
+            livroService.loadAll();
+            clienteService.loadAll();
+            loadRequests();
+            livroTableModel.setLivros(livroService.findAll());
+            atualizarClientesNaTabela();
+        } else {
+            JOptionPane.showMessageDialog(this, "Falha ao aprovar (talvez livro indisponível).", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void onRejeitarPedido() {
+        int row = requestTable.getSelectedRow();
+        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um pedido."); return; }
+        Request r = requestTableModel.getRequestAt(row);
+        Catalogo c = new Catalogo();
+        boolean ok = c.rejectRequest(r.getClienteNome(), r.getTituloLivro());
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Pedido rejeitado.");
+            loadRequests();
+        } else {
+            JOptionPane.showMessageDialog(this, "Falha ao rejeitar pedido.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     private void loadAllInBackground() {
@@ -313,6 +375,7 @@ public class MainFrame extends JFrame {
                 livroTableModel.setLivros(livroService.findAll());
                 clienteTableModel.setClientes(clienteService.findAll());
                 funcionarioTableModel.setFuncionarios(funcionarioService.findAll());
+                loadRequests();
             }
         }.execute();
     }

@@ -1,6 +1,7 @@
-Nome,Idade,Devendo,LivroAlugado
-Aztec,20,false,Logbait
-Ygor,18,true,1984
-Kassadin,18,true,Gabriel
-Samuel,28,true,PEKKA
-Pikomon,18,false,Nenhum
+Nome,Idade,Devendo,LivroAlugado,Senha
+Aztec,20,false,Logbait,
+Ygor,18,true,1984,
+Kassadin,18,true,Gabriel,
+Samuel,28,true,Splashyard,
+Pikomon,18,false,Nenhum,
+Cassius,18,false,Nenhum,cassius

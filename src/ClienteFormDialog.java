@@ -1,18 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.List;
 
 public class ClienteFormDialog extends JDialog {
     private JTextField tfNome;
     private JSpinner spIdade;
-    private JCheckBox cbDevendo;
-    private JComboBox<String> cbLivroAlugado; // trocado de JTextField para JComboBox
+    private JPasswordField pfSenha;
     private boolean saved = false;
 
     public ClienteFormDialog(Frame owner) {
         super(owner, true);
-        setTitle("Cliente");
+        setTitle("Registrar Cliente");
         initComponents();
         pack();
         setLocationRelativeTo(owner);
@@ -21,15 +18,7 @@ public class ClienteFormDialog extends JDialog {
     private void initComponents() {
         tfNome = new JTextField(25);
         spIdade = new JSpinner(new SpinnerNumberModel(18, 0, 150, 1));
-        cbDevendo = new JCheckBox("Está devendo?");
-        cbLivroAlugado = new JComboBox<>();
-
-        // popular combo com livros existentes (inclui "Nenhum")
-        Catalogo c = new Catalogo();
-        cbLivroAlugado.addItem("Nenhum");
-        for (Livro l : c.getCatalogoLivros()) {
-            cbLivroAlugado.addItem(l.getTitulo());
-        }
+        pfSenha = new JPasswordField(20);
 
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints cst = new GridBagConstraints();
@@ -42,15 +31,13 @@ public class ClienteFormDialog extends JDialog {
         cst.gridx = 0; cst.gridy = 1; form.add(new JLabel("Idade:"), cst);
         cst.gridx = 1; form.add(spIdade, cst);
 
-        cst.gridx = 0; cst.gridy = 2; form.add(new JLabel("Livro Alugado:"), cst);
-        cst.gridx = 1; form.add(cbLivroAlugado, cst);
-
-        cst.gridx = 0; cst.gridy = 3; cst.gridwidth = 2; form.add(cbDevendo, cst);
+        cst.gridx = 0; cst.gridy = 2; form.add(new JLabel("Senha (para login):"), cst);
+        cst.gridx = 1; form.add(pfSenha, cst);
 
         JButton ok = new JButton("Salvar");
-        ok.addActionListener((ActionEvent e) -> onSave());
+        ok.addActionListener(e -> onSave());
         JButton cancel = new JButton("Cancelar");
-        cancel.addActionListener((ActionEvent e) -> onCancel());
+        cancel.addActionListener(e -> onCancel());
 
         JPanel bp = new JPanel(); bp.add(ok); bp.add(cancel);
 
@@ -62,38 +49,27 @@ public class ClienteFormDialog extends JDialog {
         if (cliente == null) {
             tfNome.setText("");
             spIdade.setValue(18);
-            cbDevendo.setSelected(false);
-            // seleciona "Nenhum"
-            cbLivroAlugado.setSelectedItem("Nenhum");
+            pfSenha.setText("");
         } else {
             tfNome.setText(cliente.getNome());
             spIdade.setValue(cliente.getIdade());
-            cbDevendo.setSelected(cliente.getStatusDevendo());
-            String livro = cliente.getLivroAlugado();
-            if (livro == null || livro.trim().isEmpty()) livro = "Nenhum";
-            // se o livro não estiver presente no combo (por alguma inconsistência), adiciona temporariamente
-            boolean found = false;
-            for (int i = 0; i < cbLivroAlugado.getItemCount(); i++) {
-                if (cbLivroAlugado.getItemAt(i).equalsIgnoreCase(livro)) { found = true; break; }
-            }
-            if (!found && !livro.equals("Nenhum")) {
-                cbLivroAlugado.addItem(livro);
-            }
-            cbLivroAlugado.setSelectedItem(livro);
+            pfSenha.setText(cliente.getSenha());
         }
     }
     public Cliente getClienteFromForm() {
         String nome = tfNome.getText().trim();
         int idade = (Integer) spIdade.getValue();
-        boolean devendo = cbDevendo.isSelected();
-        String livro = (String) cbLivroAlugado.getSelectedItem();
-        if (livro == null || livro.trim().isEmpty()) livro = "Nenhum";
-        return new Cliente(nome, idade, devendo, livro);
+        String senha = new String(pfSenha.getPassword());
+        // cliente sempre criado sem livro alugado e sem devendo
+        return new Cliente(nome, idade, false, "Nenhum", senha);
     }
-
     private void onSave() {
         if (tfNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome obrigatório", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (pfSenha.getPassword().length == 0) {
+            JOptionPane.showMessageDialog(this, "Senha obrigatória", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
         saved = true;
