@@ -4,21 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainFrame extends JFrame {
-    // serviços
     private LivroService livroService;
     private ClienteService clienteService;
     private FuncionarioService funcionarioService;
 
-    // livros
     private LivroModeloDeTable livroTableModel;
     private JTable livroTable;
 
-    // clientes
     private ClienteModeloDeTable clienteTableModel;
     private JTable clienteTable;
     private boolean mostrarApenasDevedores = false;
 
-    // funcionarios
     private FuncionarioModeloDeTable funcionarioTableModel;
     private JTable funcionarioTable;
 
@@ -74,6 +70,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onEditarLivro() {
         int row = livroTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
@@ -121,13 +118,14 @@ public class MainFrame extends JFrame {
             mostrarApenasDevedores = filtrarDevedores.isSelected();
             atualizarClientesNaTabela();
         });
+        JButton btnAlugar = new JButton("Alugar Livro");
+        btnAlugar.addActionListener(e -> onAlugarLivro());
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(novo); top.add(editar); top.add(excluir); top.add(filtrarDevedores);
+        top.add(novo); top.add(editar); top.add(excluir); top.add(filtrarDevedores); top.add(btnAlugar);
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
-
     private void onNovoCliente() {
         ClienteFormDialog dlg = new ClienteFormDialog(this);
         dlg.setCliente(null);
@@ -135,28 +133,72 @@ public class MainFrame extends JFrame {
         if (dlg.isSaved()) {
             Cliente novo = dlg.getClienteFromForm();
             new SwingWorker<Void, Void>() {
-                @Override protected Void doInBackground() { new ClienteService().save(novo); return null; }
-                @Override protected void done() { clienteService.loadAll(); atualizarClientesNaTabela(); }
+                @Override protected Void doInBackground() {
+                    new ClienteService().save(novo);
+                    String livroEscolhido = novo.getLivroAlugado();
+                    if (livroEscolhido != null && !livroEscolhido.equalsIgnoreCase("Nenhum")) {
+                        Catalogo c = new Catalogo();
+                        boolean ok = c.alugarLivroParaCliente(novo.getNome(), livroEscolhido);
+                        if (!ok) {
+                            System.out.println("Aluguel falhou para " + novo.getNome() + " / " + livroEscolhido);
+                        }
+                    }
+                    return null;
+                }
+                @Override protected void done() {
+                    clienteService.loadAll();
+                    livroService.loadAll();
+                    atualizarClientesNaTabela();
+                    livroTableModel.setLivros(livroService.findAll());
+                }
             }.execute();
         }
     }
-
     private void onEditarCliente() {
         int row = clienteTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um cliente."); return; }
-        Cliente c = clienteTableModel.getClienteAt(row);
+        Cliente antigo = clienteTableModel.getClienteAt(row);
+        String livroAntigo = antigo.getLivroAlugado() == null ? "Nenhum" : antigo.getLivroAlugado();
         ClienteFormDialog dlg = new ClienteFormDialog(this);
-        dlg.setCliente(c);
+        dlg.setCliente(antigo);
         dlg.setVisible(true);
         if (dlg.isSaved()) {
             Cliente atualizado = dlg.getClienteFromForm();
             new SwingWorker<Void, Void>() {
-                @Override protected Void doInBackground() { new ClienteService().save(atualizado); return null; }
-                @Override protected void done() { clienteService.loadAll(); atualizarClientesNaTabela(); }
+                @Override protected Void doInBackground() {
+                    new ClienteService().save(atualizado);
+                    String livroNovo = atualizado.getLivroAlugado() == null ? "Nenhum" : atualizado.getLivroAlugado();
+                    Catalogo c = new Catalogo();
+                    if (!"Nenhum".equalsIgnoreCase(livroAntigo) && !livroAntigo.equalsIgnoreCase(livroNovo)) {
+                        Livro lOld = c.buscarLivroTitulo(livroAntigo);
+                        if (lOld != null) {
+                            lOld.setDisponibilidade(true);
+                            c.atualizarCatalogo();
+                        }
+                        Cliente clienteDoArquivo = c.buscarClienteNome(atualizado.getNome());
+                        if (clienteDoArquivo != null) {
+                            clienteDoArquivo.setStatusDevendo(false);
+                            clienteDoArquivo.setLivroAlugado("Nenhum");
+                            c.atualizarClientes();
+                        }
+                    }
+                    if (!"Nenhum".equalsIgnoreCase(livroNovo) && !livroNovo.equalsIgnoreCase(livroAntigo)) {
+                        boolean ok = c.alugarLivroParaCliente(atualizado.getNome(), livroNovo);
+                        if (!ok) {
+                            System.out.println("Falha ao alugar novo livro: " + livroNovo + " para " + atualizado.getNome());
+                        }
+                    }
+                    return null;
+                }
+                @Override protected void done() {
+                    clienteService.loadAll();
+                    livroService.loadAll();
+                    atualizarClientesNaTabela();
+                    livroTableModel.setLivros(livroService.findAll());
+                }
             }.execute();
         }
     }
-
     private void onExcluirCliente() {
         int row = clienteTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um cliente."); return; }
@@ -180,6 +222,24 @@ public class MainFrame extends JFrame {
             clienteTableModel.setClientes(devedores);
         }
     }
+    private void onAlugarLivro() {
+        AlugarLivroDialog dlg = new AlugarLivroDialog(this);
+        dlg.setVisible(true);
+        if (dlg.isConfirmado()) {
+            new SwingWorker<Void, Void>() {
+                @Override protected Void doInBackground() {
+                    livroService.loadAll();
+                    clienteService.loadAll();
+                    return null;
+                }
+                @Override protected void done() {
+                    livroTableModel.setLivros(livroService.findAll());
+                    atualizarClientesNaTabela();
+                }
+            }.execute();
+        }
+    }
+
     private JPanel criarPainelFuncionarios() {
         JPanel panel = new JPanel(new BorderLayout());
         funcionarioTableModel = new FuncionarioModeloDeTable(funcionarioService.findAll());
@@ -241,7 +301,6 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
-
     private void loadAllInBackground() {
         new SwingWorker<Void, Void>() {
             @Override protected Void doInBackground() {
