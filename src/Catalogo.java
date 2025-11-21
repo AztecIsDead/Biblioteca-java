@@ -184,19 +184,19 @@ public class Catalogo {
         for (Request r : requests) {
             if (r.getClienteNome().equalsIgnoreCase(clienteNome)
                     && r.getTituloLivro().equalsIgnoreCase(tituloLivro)
-                    && r.getStatus() == Request.Status.PENDING) {
+                    && r.getStatus() == Request.Status.PENDENTE) {
                 System.out.println("Pedido já pendente: " + clienteNome + " / " + tituloLivro);
                 return;
             }
         }
-        Request nova = new Request(clienteNome, tituloLivro, Request.Status.PENDING, null);
+        Request nova = new Request(clienteNome, tituloLivro, Request.Status.PENDENTE, null);
         requests.add(nova);
         atualizarRequests();
     }
     public List<Request> getPendingRequests() {
         List<Request> out = new ArrayList<>();
         if (requests == null) return out;
-        for (Request r : requests) if (r.getStatus() == Request.Status.PENDING) out.add(r);
+        for (Request r : requests) if (r.getStatus() == Request.Status.PENDENTE) out.add(r);
         return out;
     }
 
@@ -208,7 +208,7 @@ public class Catalogo {
             for (Request r : requests) {
                 if (r.getClienteNome().equalsIgnoreCase(clienteNome)
                         && r.getTituloLivro().equalsIgnoreCase(tituloLivro)
-                        && r.getStatus() == Request.Status.PENDING) {
+                        && r.getStatus() == Request.Status.PENDENTE) {
                     found = r; break;
                 }
             }
@@ -225,7 +225,7 @@ public class Catalogo {
         // NÃO marcar como devendo aqui
 
         LocalDate due = LocalDate.now().plusDays(daysUntilDue);
-        found.setStatus(Request.Status.APPROVED);
+        found.setStatus(Request.Status.APROVADO);
         found.setDueDate(due);
 
         atualizarCatalogo();
@@ -241,13 +241,13 @@ public class Catalogo {
             for (Request r : requests) {
                 if (r.getClienteNome().equalsIgnoreCase(clienteNome)
                         && r.getTituloLivro().equalsIgnoreCase(tituloLivro)
-                        && r.getStatus() == Request.Status.PENDING) {
+                        && r.getStatus() == Request.Status.PENDENTE) {
                     found = r; break;
                 }
             }
         }
         if (found == null) return false;
-        found.setStatus(Request.Status.REJECTED);
+        found.setStatus(Request.Status.REJEITADO);
         atualizarRequests();
         return true;
     }
@@ -256,7 +256,7 @@ public class Catalogo {
         LocalDate hoje = LocalDate.now();
         boolean mudou = false;
         for (Request r : requests) {
-            if (r.getStatus() == Request.Status.APPROVED && r.getDueDate() != null && r.getDueDate().isBefore(hoje)) {
+            if (r.getStatus() == Request.Status.APROVADO && r.getDueDate() != null && r.getDueDate().isBefore(hoje)) {
                 // cliente com aluguel vencido -> marcar devendo
                 Cliente cl = buscarClienteNome(r.getClienteNome());
                 if (cl != null && !cl.getStatusDevendo()) {

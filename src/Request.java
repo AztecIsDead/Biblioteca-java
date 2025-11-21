@@ -2,12 +2,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Request implements CSVGravavel {
-    public enum Status { PENDING, APPROVED, REJECTED }
+    public enum Status {PENDENTE, APROVADO, REJEITADO}
 
     private String clienteNome;
     private String tituloLivro;
     private Status status;
-    private LocalDate dueDate; // pode ser null
+    private LocalDate dueDate;
 
     private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
 
