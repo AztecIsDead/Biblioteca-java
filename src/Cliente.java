@@ -27,7 +27,6 @@ public class Cliente extends Usuario implements CSVGravavel {
 
     @Override
     public String toCSV() {
-        // salvamos senha como último campo; se vazio, fica vazio
         return getNome() + "," + getIdade() + "," + getStatusDevendo() + "," + (getLivroAlugado() == null ? "" : getLivroAlugado()) + "," + getSenha();
     }
 

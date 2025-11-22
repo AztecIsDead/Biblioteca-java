@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.Timer;
 
 public class MainFrame extends JFrame {
+
     private LivroService livroService;
     private ClienteService clienteService;
     private FuncionarioService funcionarioService;
@@ -21,25 +23,52 @@ public class MainFrame extends JFrame {
     private RequestTableModel requestTableModel;
     private JTable requestTable;
 
-    public MainFrame() {
+    private JLabel lblSessionTime;
+    private Timer sessionTimer;
+    private long sessionSeconds = 0;
+    private String funcionarioLogado;
+
+    public MainFrame(String funcionarioLogado) {
         super("Sistema Biblioteca - Swing (Admin)");
+        this.funcionarioLogado = funcionarioLogado;
+
         livroService = new LivroService();
         clienteService = new ClienteService();
         funcionarioService = new FuncionarioService();
+
         initUI();
         loadAllInBackground();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 650);
         setLocationRelativeTo(null);
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                stopSessionTimer();
+            }
+        });
+
+        startSessionTimer();
     }
+
     private void initUI() {
         JTabbedPane tabs = new JTabbedPane();
+
         tabs.addTab("Livros", criarPainelLivros());
         tabs.addTab("Clientes", criarPainelClientes());
         tabs.addTab("Funcionários", criarPainelFuncionarios());
         tabs.addTab("Pedidos", criarPainelPedidos());
+
         getContentPane().add(tabs, BorderLayout.CENTER);
+
+        lblSessionTime = new JLabel("Tempo total do funcionário: 00:00:00");
+        JPanel barraStatus = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        barraStatus.add(lblSessionTime);
+        getContentPane().add(barraStatus, BorderLayout.SOUTH);
     }
+
     private JPanel criarPainelLivros() {
         JPanel panel = new JPanel(new BorderLayout());
         livroTableModel = new LivroModeloDeTable(livroService.findAll());
@@ -57,6 +86,7 @@ public class MainFrame extends JFrame {
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
+
     private void onNovoLivro() {
         LivroFormDialog dlg = new LivroFormDialog(this);
         dlg.setLivro(null);
@@ -69,6 +99,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onEditarLivro() {
         int row = livroTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
@@ -84,6 +115,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onExcluirLivro() {
         int row = livroTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
@@ -96,6 +128,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private JPanel criarPainelClientes() {
         JPanel panel = new JPanel(new BorderLayout());
         clienteTableModel = new ClienteModeloDeTable(clienteService.findAll());
@@ -121,6 +154,7 @@ public class MainFrame extends JFrame {
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
+
     private void onNovoCliente() {
         ClienteFormDialog dlg = new ClienteFormDialog(this);
         dlg.setCliente(null);
@@ -133,8 +167,8 @@ public class MainFrame extends JFrame {
                     String livroEscolhido = novo.getLivroAlugado();
                     if (livroEscolhido != null && !livroEscolhido.equalsIgnoreCase("Nenhum")) {
                         Catalogo c = new Catalogo();
-                        boolean ok = c.approveRequest(novo.getNome(), livroEscolhido, 14); // aprova direto com 14 dias
-                        if (!ok) System.out.println("Falha em aprovar aluguel direto ao criar cliente.");
+                        boolean ok = c.approveRequest(novo.getNome(), livroEscolhido, 14);
+                        if (!ok) System.out.println("Falha em aprovar aluguel");
                     }
                     return null;
                 }
@@ -147,6 +181,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onEditarCliente() {
         int row = clienteTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um cliente."); return; }
@@ -177,7 +212,7 @@ public class MainFrame extends JFrame {
                     }
                     if (!"Nenhum".equalsIgnoreCase(livroNovo) && !livroNovo.equalsIgnoreCase(livroAntigo)) {
                         boolean ok = c.approveRequest(atualizado.getNome(), livroNovo, 14);
-                        if (!ok) System.out.println("Falha ao aprovar novo livro para " + atualizado.getNome());
+                        if (!ok) System.out.println("Falha ao aprovar novo livro");
                     }
                     return null;
                 }
@@ -190,6 +225,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onExcluirCliente() {
         int row = clienteTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um cliente."); return; }
@@ -219,6 +255,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void atualizarClientesNaTabela() {
         if (!mostrarApenasDevedores) clienteTableModel.setClientes(clienteService.findAll());
         else {
@@ -263,6 +300,7 @@ public class MainFrame extends JFrame {
         panel.add(top, BorderLayout.NORTH);
         return panel;
     }
+
     private void onNovoFuncionario() {
         FuncionarioFormDialog dlg = new FuncionarioFormDialog(this);
         dlg.setFuncionario(null);
@@ -275,6 +313,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onEditarFuncionario() {
         int row = funcionarioTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um funcionário."); return; }
@@ -290,6 +329,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private void onExcluirFuncionario() {
         int row = funcionarioTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um funcionário."); return; }
@@ -302,6 +342,7 @@ public class MainFrame extends JFrame {
             }.execute();
         }
     }
+
     private JPanel criarPainelPedidos() {
         JPanel panel = new JPanel(new BorderLayout());
         requestTableModel = new RequestTableModel(new java.util.ArrayList<>());
@@ -324,11 +365,13 @@ public class MainFrame extends JFrame {
 
         return panel;
     }
+
     private void loadRequests() {
         Catalogo c = new Catalogo();
         java.util.List<Request> pendentes = c.getPendingRequests();
         requestTableModel.setRequests(pendentes);
     }
+
     private void onAprovarPedido() {
         int row = requestTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um pedido."); return; }
@@ -340,16 +383,17 @@ public class MainFrame extends JFrame {
         Catalogo c = new Catalogo();
         boolean ok = c.approveRequest(r.getClienteNome(), r.getTituloLivro(), days);
         if (ok) {
-            JOptionPane.showMessageDialog(this, "Pedido aprovado. Livro e cliente atualizados.");
+            JOptionPane.showMessageDialog(this, "Pedido aprovado.");
             livroService.loadAll();
             clienteService.loadAll();
             loadRequests();
             livroTableModel.setLivros(livroService.findAll());
             atualizarClientesNaTabela();
         } else {
-            JOptionPane.showMessageDialog(this, "Falha ao aprovar (talvez livro indisponível).", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Falha ao aprovar.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void onRejeitarPedido() {
         int row = requestTable.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um pedido."); return; }
@@ -360,9 +404,10 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Pedido rejeitado.");
             loadRequests();
         } else {
-            JOptionPane.showMessageDialog(this, "Falha ao rejeitar pedido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Falha ao rejeitar.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void loadAllInBackground() {
         new SwingWorker<Void, Void>() {
             @Override protected Void doInBackground() {
@@ -378,5 +423,29 @@ public class MainFrame extends JFrame {
                 loadRequests();
             }
         }.execute();
+    }
+
+
+    private void startSessionTimer() {
+        sessionSeconds = SessionCSV.loadTotalSeconds(funcionarioLogado);
+        updateSessionLabel();
+
+        sessionTimer = new Timer(1000, e -> {
+            sessionSeconds++;
+            updateSessionLabel();
+        });
+        sessionTimer.start();
+    }
+
+    private void stopSessionTimer() {
+        if (sessionTimer != null) sessionTimer.stop();
+        SessionCSV.saveTotalSeconds(funcionarioLogado, sessionSeconds);
+    }
+
+    private void updateSessionLabel() {
+        long h = sessionSeconds / 3600;
+        long m = (sessionSeconds % 3600) / 60;
+        long s = sessionSeconds % 60;
+        lblSessionTime.setText(String.format("Tempo total do funcionário: %02d:%02d:%02d", h, m, s));
     }
 }

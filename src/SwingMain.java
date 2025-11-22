@@ -3,12 +3,10 @@ import java.awt.*;
 
 public class SwingMain {
     public static void main(String[] args) {
-        // garante execução na EDT
         SwingUtilities.invokeLater(() -> {
             showEntryMenu();
         });
     }
-
     private static void showEntryMenu() {
         String[] options = {"Funcionário", "Cliente", "Sair"};
         int choice = JOptionPane.showOptionDialog(
@@ -21,13 +19,11 @@ public class SwingMain {
                 options,
                 options[0]
         );
-
-        if (choice == 0) { // Funcionário
+        if (choice == 0) {
             showFuncionarioLogin();
-        } else if (choice == 1) { // Cliente
+        } else if (choice == 1) {
             showClientFrame();
         } else {
-            // Sair ou fechado
             System.exit(0);
         }
     }
@@ -71,7 +67,6 @@ public class SwingMain {
                     "Criar funcionário",
                     JOptionPane.YES_NO_OPTION);
             if (create == JOptionPane.YES_OPTION) {
-                // cria e persiste
                 Funcionario novo = new Funcionario(nome, 18, "cargo");
                 c.addFuncionario(novo);
                 JOptionPane.showMessageDialog(null, "Funcionário criado. Você será logado como: " + nome);
@@ -80,8 +75,9 @@ public class SwingMain {
                 return;
             }
         }
-        MainFrame f = new MainFrame();
+        MainFrame f = new MainFrame(nome);
         f.setVisible(true);
+
     }
     private static void showClientFrame() {
         ClientFrame cf = new ClientFrame();

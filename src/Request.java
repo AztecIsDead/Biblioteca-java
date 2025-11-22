@@ -2,7 +2,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Request implements CSVGravavel {
-    public enum Status { PENDING, APPROVED, REJECTED }
+    public enum Status {PENDING, APPROVED, REJECTED}
 
     private String clienteNome;
     private String tituloLivro;
