@@ -38,7 +38,7 @@ O Senhor dos Anéis,J. R. R. Tolkien,false -- Dados do Segundo Livro Registrado
 - Na GUI, os arquivos são lidos e os atributos dos livros e outras classes são
 mostrados como no exemplo:
 
-[imagem](url)
+[imagem]([url](https://github.com/AztecIsDead/Biblioteca-java/blob/main/Captura%20de%20tela%20LIVROS.png))
 
 ### Logando no aplicativo:
 - Para usar o sistema, é necessário logar como 'Funcionário' ou 'Cliente'.
