@@ -11,7 +11,7 @@ public class LivroService {
     public final void loadAll() {
         try {
             Catalogo c = new Catalogo();
-            ArrayList<Livro> lista = c.getCatalogoLivros();
+            ArrayList<Livro> lista = c.getLivrosCadastrados();
             if (lista == null) cache = new ArrayList<>();
             else cache = new ArrayList<>(lista);
         } catch (Exception e) {
@@ -28,7 +28,7 @@ public class LivroService {
         if (livro == null) return;
 
         Catalogo c = new Catalogo();
-        ArrayList<Livro> listaCatalogo = c.getCatalogoLivros();
+        ArrayList<Livro> listaCatalogo = c.getLivrosCadastrados();
         if (listaCatalogo == null) listaCatalogo = new ArrayList<>();
 
         int idx = -1;
@@ -44,7 +44,7 @@ public class LivroService {
         if (idx >= 0) listaCatalogo.set(idx, livro);
         else listaCatalogo.add(livro);
 
-        CSVUtil.gravarCSV(listaCatalogo, "livros.csv");
+        CSVUtil.gravarCSV("data/livros.csv", listaCatalogo);
         cache = new ArrayList<>(listaCatalogo);
     }
 
@@ -52,7 +52,7 @@ public class LivroService {
         if (livro == null) return;
 
         Catalogo c = new Catalogo();
-        ArrayList<Livro> listaCatalogo = c.getCatalogoLivros();
+        ArrayList<Livro> listaCatalogo = c.getLivrosCadastrados();
         if (listaCatalogo == null) listaCatalogo = new ArrayList<>();
 
         listaCatalogo.removeIf(l ->
@@ -60,7 +60,7 @@ public class LivroService {
                         l.getAutor().equalsIgnoreCase(livro.getAutor())
         );
 
-        CSVUtil.gravarCSV(listaCatalogo, "livros.csv");
+        CSVUtil.gravarCSV("data/livros.csv", listaCatalogo);
         cache = new ArrayList<>(listaCatalogo);
     }
 }

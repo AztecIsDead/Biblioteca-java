@@ -1,93 +1,83 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CSVUtil {
-    private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    public static <T extends CSVGravavel> void gravarCSV(ArrayList<T> lista, String caminhoArquivo) {
-        if (lista == null || lista.isEmpty()) {
-            System.out.println("Lista vazia, nada a gravar: " + caminhoArquivo);
-            return;
+    public static String escape(String s) {
+        if (s == null) return "";
+        if (s.contains(",") || s.contains("\"") || s.contains("\n")) {
+            s = s.replace("\"", "\"\"");
+            return "\"" + s + "\"";
         }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
-            writer.write(lista.get(0).getCabecalhoCSV());
-            writer.newLine();
-            for (T item : lista) {
-                writer.write(item.toCSV());
-                writer.newLine();
-            }
-            System.out.println("Arquivo salvo em: " + caminhoArquivo);
-        } catch (IOException e) {
-            System.out.println("Erro ao gravar o CSV: " + e.getMessage());
-        }
+        return s;
     }
-    public static <T> ArrayList<T> lerCSV(String caminhoArquivo, Class<T> tipoClasse) {
-        ArrayList<T> lista = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo))) {
-            String linha;
-            boolean primeira = true;
-            while ((linha = reader.readLine()) != null) {
-                if (primeira) { primeira = false; continue; }
-                if (linha.trim().isEmpty()) continue;
-                String[] campos = linha.split(",");
-                if (tipoClasse == Funcionario.class) {
-                    try {
-                        String nome = campos[0];
-                        int idade = Integer.parseInt(campos[1]);
-                        String cargo = campos[2];
-                        lista.add(tipoClasse.cast(new Funcionario(nome, idade, cargo)));
-                    } catch (Exception e) {
-                        System.out.println("Linha de Funcionario inválida, pulando: " + e.getMessage());
-                    }
-                } else if (tipoClasse == Cliente.class) {
-                    try {
-                        String nome = campos[0];
-                        int idade = Integer.parseInt(campos[1]);
-                        boolean devendo = Boolean.parseBoolean(campos[2]);
-                        String livroAlugado = campos.length > 3 ? campos[3] : "Nenhum";
-                        String senha = campos.length > 4 ? campos[4] : "";
-                        boolean vip = Boolean.parseBoolean(campos[5]);
-                        lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado == null || livroAlugado.isEmpty() ? "Nenhum" : livroAlugado, senha, vip)));
-                    } catch (Exception e) {
-                        System.out.println("Linha de Cliente inválida, pulando: " + e.getMessage());
-                    }
-                } else if (tipoClasse == Livro.class) {
-                    try {
-                        String titulo = campos[0];
-                        String autor = campos[1];
-                        boolean disponibilidade = Boolean.parseBoolean(campos[2]);
-                        boolean exclusividade = Boolean.parseBoolean(campos[3]);
-                        lista.add(tipoClasse.cast(new Livro(titulo, autor, disponibilidade, exclusividade)));
-                    } catch (Exception e) {
-                        System.out.println("Linha de Livro inválida, pulando: " + e.getMessage());
-                    }
-                } else if (tipoClasse == Request.class) {
-                    try {
-                        String cliente = campos[0];
-                        String titulo = campos[1];
-                        Request.Status st = Request.Status.valueOf(campos[2]);
-                        LocalDate due = null;
-                        if (campos.length > 3 && !campos[3].trim().isEmpty()) {
-                            due = LocalDate.parse(campos[3], F);
-                        }
-                        lista.add(tipoClasse.cast(new Request(cliente, titulo, st, due)));
-                    } catch (Exception e) {
-                        System.out.println("Linha de Request inválida, pulando: " + e.getMessage());
-                    }
+
+    public static String[] parseLine(String linha) {
+        if (linha == null) return new String[0];
+        List<String> campos = new ArrayList<>();
+        StringBuilder atual = new StringBuilder();
+        boolean emAspas = false;
+
+        for (int i = 0; i < linha.length(); i++) {
+            char c = linha.charAt(i);
+
+            if (c == '"') {
+                if (emAspas && i + 1 < linha.length() && linha.charAt(i + 1) == '"') {
+                    atual.append('"');
+                    i++;
+                } else {
+                    emAspas = !emAspas;
                 }
+            } else if ((c == ',' || c == ';') && !emAspas) {
+                campos.add(atual.toString());
+                atual.setLength(0);
+            } else {
+                atual.append(c);
             }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler o CSV: " + e.getMessage());
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Erro ao ler arquivo CSV vazio. " + e.getMessage());
         }
-        return lista;
+
+        campos.add(atual.toString());
+        for (int i = 0; i < campos.size(); i++) {
+            campos.set(i, campos.get(i).trim());
+        }
+        return campos.toArray(new String[0]);
+    }
+
+    public static List<String[]> lerCSV(String arquivo) {
+        List<String[]> linhas = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                if (linha.trim().isEmpty()) continue;
+                linhas.add(parseLine(linha));
+            }
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+
+        return linhas;
+    }
+
+    public static void gravarCSV(String arquivo, List<? extends CSVGravavel> objetos) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo))) {
+
+            if (objetos == null || objetos.isEmpty()) {
+                bw.write("");
+                return;
+            }
+
+            bw.write(objetos.get(0).getCabecalhoCSV());
+            bw.newLine();
+
+            for (CSVGravavel o : objetos) {
+                bw.write(o.toCSV());
+                bw.newLine();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

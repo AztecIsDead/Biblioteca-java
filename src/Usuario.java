@@ -1,4 +1,6 @@
-public abstract class Usuario {
+import java.io.Serializable;
+
+public abstract class Usuario implements Serializable {
     private String nome;
     private int idade;
     protected String nomeDoArquivo;
@@ -6,7 +8,6 @@ public abstract class Usuario {
     public Usuario(String nome, int idade) {
         this.nome = nome;
         this.idade = idade;
-       
     }
 
     public String getNome(){

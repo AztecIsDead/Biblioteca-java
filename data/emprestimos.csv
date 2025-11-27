@@ -1,0 +1,4 @@
+id,clienteId,livroId,dataEmprestimo,dataPrevista,dataDevolucao,devolvido
+EMP-559462a7-663c-4e89-ba7f-d0fd5a6684d9,4,2,2025-11-27,2025-12-11,2025-11-27,true
+EMP-757e4981-57e5-4528-8fdb-7a04cf1fa006,2,1,2025-11-27,2025-12-18,2025-11-27,true
+EMP-8ab10296-9646-42ee-b167-dc7550c439ba,4,2,2025-11-27,2025-12-11,,false

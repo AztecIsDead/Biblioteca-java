@@ -1,11 +1,11 @@
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class FuncionarioModeloDeTable extends AbstractTableModel {
+public class FuncionarioTableModel extends AbstractTableModel {
     private final String[] colNames = {"Nome", "Idade", "Cargo"};
     private List<Funcionario> funcionarios;
 
-    public FuncionarioModeloDeTable(List<Funcionario> funcionarios) { this.funcionarios = funcionarios; }
+    public FuncionarioTableModel(List<Funcionario> funcionarios) { this.funcionarios = funcionarios; }
 
     public void setFuncionarios(List<Funcionario> funcionarios) {
         this.funcionarios = funcionarios;

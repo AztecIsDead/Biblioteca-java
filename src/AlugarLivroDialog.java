@@ -2,106 +2,64 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AlugarLivroDialog extends JDialog {
-    private JComboBox<String> cbClientes;
-    private JComboBox<String> cbLivrosDisponiveis;
     private boolean confirmado = false;
-    private Catalogo catalogo;
+    private JList<String> listaLivros;
+    private String livroSelecionadoId = null;
 
     public AlugarLivroDialog(Frame owner) {
-        super(owner, true);
-        setTitle("Alugar Livro");
-        catalogo = new Catalogo();
-        initComponents();
-        pack();
-        setLocationRelativeTo(owner);
-    }
-    private void initComponents() {
-        cbClientes = new JComboBox<>();
-        cbLivrosDisponiveis = new JComboBox<>();
-
-        for (Cliente c : catalogo.getClientesCadastrados()) cbClientes.addItem(c.getNome());
-        for (Livro l : catalogo.getCatalogoLivros()) if (l.getDisponibilidade()) cbLivrosDisponiveis.addItem(l.getTitulo());
-
-        JPanel p = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(6,6,6,6);
-        c.anchor = GridBagConstraints.WEST;
-
-        c.gridx = 0; c.gridy = 0; p.add(new JLabel("Cliente:"), c);
-        c.gridx = 1; p.add(cbClientes, c);
-
-        c.gridx = 0; c.gridy = 1; p.add(new JLabel("Livro disponível:"), c);
-        c.gridx = 1; p.add(cbLivrosDisponiveis, c);
-
-        JButton btnOk = new JButton("Alugar");
-        btnOk.addActionListener(e -> onAlugar());
-
-        JButton btnCancel = new JButton("Cancelar");
-        btnCancel.addActionListener(e -> onCancel());
-
-        JPanel bp = new JPanel();
-        bp.add(btnOk);
-        bp.add(btnCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(p, BorderLayout.CENTER);
-        getContentPane().add(bp, BorderLayout.SOUTH);
+        super(owner, "Alugar / Requisitar Livro", true);
+        init();
     }
 
-    private void onAlugar() {
-        String nomeCliente = (String) cbClientes.getSelectedItem();
-        String tituloLivro = (String) cbLivrosDisponiveis.getSelectedItem();
+    private void init() {
+        setLayout(new BorderLayout(8, 8));
+        setPreferredSize(new Dimension(600, 400));
 
-        if (nomeCliente == null || nomeCliente.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Selecione um cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (tituloLivro == null || tituloLivro.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Selecione um livro disponível.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        RepositorioLivroCsv repo = new RepositorioLivroCsv("data/livros.csv");
+        Catalogo catalogo = new Catalogo(repo);
 
-        // pergunta o tipo de operação
-        String[] options = {"Imediato (sem due date)", "Com prazo (definir dias)", "Cancelar"};
-        int opt = JOptionPane.showOptionDialog(
-                this,
-                "Escolha o tipo de aluguel:",
-                "Tipo de aluguel",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
+        DefaultListModel<String> lm = new DefaultListModel<>();
 
-        if (opt == 2 || opt == JOptionPane.CLOSED_OPTION) return;
+        java.util.List<Livro> livros = catalogo.getLivrosCadastrados();
+        if (livros == null || livros.isEmpty()) { livros = repo.findAll(); }
 
-        boolean ok = false;
-        if (opt == 0) { // imediato
-            ok = catalogo.alugarLivroParaCliente(nomeCliente, tituloLivro);
-        } else if (opt == 1) { // com prazo -> pergunta dias e usa approveRequest
-            String s = JOptionPane.showInputDialog(this, "Prazo em dias (ex: 14):", "14");
-            if (s == null) return;
-            int days = 14;
-            try { days = Integer.parseInt(s); } catch (Exception ex) { days = 14; }
-            ok = catalogo.approveRequest(nomeCliente, tituloLivro, days);
+        for (Livro l : livros) {
+            lm.addElement(l.getId() + " - " + l.getTitulo() + " (" + l.getAutor() + ") [disponíveis: " + l.getCopiasDisponiveis() + "]");
         }
 
-        if (ok) {
-            JOptionPane.showMessageDialog(this, "Operação realizada com sucesso para " + nomeCliente + "!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        listaLivros = new JList<>(lm);
+        listaLivros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        add(new JScrollPane(listaLivros), BorderLayout.CENTER);
+
+        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnAlugar = new JButton("Alugar / Requisitar");
+        JButton btnCancelar = new JButton("Cancelar");
+        botoes.add(btnAlugar);
+        botoes.add(btnCancelar);
+        add(botoes, BorderLayout.SOUTH);
+
+        btnAlugar.addActionListener(e -> {
+            int sel = listaLivros.getSelectedIndex();
+            if (sel == -1) { JOptionPane.showMessageDialog(this, "Selecione um livro."); return; }
+            String linha = lm.get(sel);
+            String[] partes = linha.split(" - ", 2);
+            livroSelecionadoId = partes[0];
             confirmado = true;
             setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(this, "Não foi possível completar a operação. Verifique cliente/livro/estado.", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+        });
+
+        btnCancelar.addActionListener(e -> { confirmado = false; livroSelecionadoId = null; setVisible(false); });
+
+        pack();
+        setLocationRelativeTo(getOwner());
     }
 
-    private void onCancel() {
-        confirmado = false;
-        setVisible(false);
-    }
+    public boolean isConfirmado() { return confirmado; }
+    public String getLivroSelecionadoId() { return livroSelecionadoId; }
 
-    public boolean isConfirmado() {
-        return confirmado;
+    public static AlugarLivroDialog showDialog(Frame owner) {
+        AlugarLivroDialog d = new AlugarLivroDialog(owner);
+        d.setVisible(true);
+        return d;
     }
 }

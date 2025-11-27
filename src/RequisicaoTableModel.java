@@ -2,10 +2,10 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RequestTableModel extends AbstractTableModel {
+public class RequisicaoTableModel extends AbstractTableModel {
 
     private final String[] colunas = {
-            "ID", "Livro", "Status", "Data"
+            "ID", "Cliente ID", "Livro", "Status", "Data"
     };
 
     private List<Requisicao> dados = new ArrayList<>();
@@ -31,9 +31,10 @@ public class RequestTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0: return r.getId();
-            case 1: return r.getLivroTitulo();
-            case 2: return r.getStatus();
-            case 3: return r.getData();
+            case 1: return r.getClienteId();
+            case 2: return r.getLivroTitulo();
+            case 3: return r.getStatus();
+            case 4: return r.getData();
         }
         return null;
     }

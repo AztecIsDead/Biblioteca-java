@@ -30,7 +30,9 @@ public class FuncionarioService {
             if (ff.getNome().equalsIgnoreCase(f.getNome())) { idx = i; break; }
         }
         if (idx >= 0) list.set(idx, f); else list.add(f);
-        CSVUtil.gravarCSV(list, "funcionarios.csv");
+        RepositorioFuncionarioCsv repo = new RepositorioFuncionarioCsv("data/funcionarios.csv");
+        repo.salvarTodos(list);
+
         cache = new ArrayList<>(list);
     }
 
@@ -40,7 +42,9 @@ public class FuncionarioService {
         ArrayList<Funcionario> list = c.getFuncionariosCadastrados();
         if (list == null) list = new ArrayList<>();
         list.removeIf(fi -> fi.getNome().equalsIgnoreCase(f.getNome()));
-        CSVUtil.gravarCSV(list, "funcionarios.csv");
+        RepositorioFuncionarioCsv repo = new RepositorioFuncionarioCsv("data/funcionarios.csv");
+        repo.salvarTodos(list);
+
         cache = new ArrayList<>(list);
     }
 }
