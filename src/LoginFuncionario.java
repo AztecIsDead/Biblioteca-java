@@ -49,7 +49,7 @@ public class LoginFuncionario extends JDialog {
 
                 int op = JOptionPane.showConfirmDialog(
                         this,
-                        "Funcionário não encontrado.\nDeseja criar um novo?\n(Requer senha mestre 123)",
+                        "Funcionário não encontrado.\nDeseja criar um novo?\n(Requer senha mestre)",
                         "Criar Funcionário",
                         JOptionPane.YES_NO_OPTION
                 );
