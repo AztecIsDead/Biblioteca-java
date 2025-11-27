@@ -15,75 +15,86 @@ public class GerenciadorEventos {
         return repositorio.findById(id).orElse(null);
     }
 
-    public static Evento criarEvento(
+    public static void criarEventoAsync(
             String nome,
             LocalDateTime inicio,
             String local,
             int capacidadeNormal,
-            int capacidadeVip
+            int capacidadeVip,
+            Runnable callback
     ) {
-        int id = repositorio.proximoId();
+        new Thread(() -> {
+            int id = repositorio.proximoId();
 
-        Evento novo = new Evento(
-                id,
-                nome,
-                inicio,
-                local,
-                capacidadeNormal,
-                capacidadeVip,
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                StatusEvento.ATIVO
-        );
+            Evento novo = new Evento(
+                    id,
+                    nome,
+                    inicio,
+                    local,
+                    capacidadeNormal,
+                    capacidadeVip,
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    StatusEvento.ATIVO
+            );
 
-        repositorio.save(novo);
-        return novo;
+            repositorio.save(novo);
+
+            if (callback != null) callback.run();
+        }).start();
     }
 
-    public static void editarEvento(Evento e) {
-        repositorio.update(e);
+    public static void editarEventoAsync(Evento e, Runnable callback) {
+        new Thread(() -> {
+            repositorio.update(e);
+            if (callback != null) callback.run();
+        }).start();
     }
 
-    public static void excluirEvento(int id) {
-        repositorio.delete(id);
+    public static void excluirEventoAsync(int id, Runnable callback) {
+        new Thread(() -> {
+            repositorio.delete(id);
+            if (callback != null) callback.run();
+        }).start();
     }
 
-    public static boolean inscreverCliente(int eventoId, int clienteId, boolean vip) {
-        Evento e = buscarPorId(eventoId);
+    public static void inscreverClienteAsync(int eventoId, int clienteId, boolean vip, Runnable callback) {
+        new Thread(() -> {
+            Evento e = buscarPorId(eventoId);
 
-        if (e == null || e.getStatus() != StatusEvento.ATIVO)
-            return false;
+            if (e != null && e.getStatus() == StatusEvento.ATIVO && !e.isInscrito(clienteId)) {
+                e.inscreverCliente(clienteId, vip);
+                repositorio.update(e);
+            }
 
-        if (e.isInscrito(clienteId))
-            return false;
-
-        e.inscreverCliente(clienteId, vip);
-        repositorio.update(e);
-
-        return true;
+            if (callback != null) callback.run();
+        }).start();
     }
 
-    public static boolean cancelarInscricao(int eventoId, int clienteId) {
-        Evento e = buscarPorId(eventoId);
+    public static void cancelarInscricaoAsync(int eventoId, int clienteId, Runnable callback) {
+        new Thread(() -> {
+            Evento e = buscarPorId(eventoId);
 
-        if (e == null)
-            return false;
+            if (e != null && e.isInscrito(clienteId)) {
+                e.removerCliente(clienteId);
+                repositorio.update(e);
+            }
 
-        if (!e.isInscrito(clienteId))
-            return false;
-
-        e.removerCliente(clienteId);
-        repositorio.update(e);
-
-        return true;
+            if (callback != null) callback.run();
+        }).start();
     }
 
-    public static void setStatus(int eventoId, StatusEvento status) {
-        Evento e = buscarPorId(eventoId);
-        if (e == null) return;
+    public static void setStatusAsync(int eventoId, StatusEvento status, Runnable callback) {
+        new Thread(() -> {
+            Evento e = buscarPorId(eventoId);
 
-        e.setStatus(status);
-        repositorio.update(e);
+            if (e != null) {
+                e.setStatus(status);
+                repositorio.update(e);
+            }
+
+            if (callback != null) callback.run();
+        }).start();
     }
 }
