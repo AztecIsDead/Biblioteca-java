@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -8,6 +9,7 @@ public class Request implements CSVGravavel {
     private String tituloLivro;
     private Status status;
     private LocalDate dueDate; // pode ser null
+    private BigDecimal multa;
 
     private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
 

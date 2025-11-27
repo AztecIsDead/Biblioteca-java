@@ -53,7 +53,8 @@ public class CSVUtil {
                         boolean devendo = Boolean.parseBoolean(campos[2]);
                         String livroAlugado = campos.length > 3 ? campos[3] : "Nenhum";
                         String senha = campos.length > 4 ? campos[4] : "";
-                        lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado == null || livroAlugado.isEmpty() ? "Nenhum" : livroAlugado, senha)));
+                        boolean vip = Boolean.parseBoolean(campos[5]);
+                        lista.add(tipoClasse.cast(new Cliente(nome, idade, devendo, livroAlugado == null || livroAlugado.isEmpty() ? "Nenhum" : livroAlugado, senha, vip)));
                     } catch (Exception e) {
                         System.out.println("Linha de Cliente inválida, pulando: " + e.getMessage());
                     }
@@ -62,7 +63,8 @@ public class CSVUtil {
                         String titulo = campos[0];
                         String autor = campos[1];
                         boolean disponibilidade = Boolean.parseBoolean(campos[2]);
-                        lista.add(tipoClasse.cast(new Livro(titulo, autor, disponibilidade)));
+                        boolean exclusividade = Boolean.parseBoolean(campos[3]);
+                        lista.add(tipoClasse.cast(new Livro(titulo, autor, disponibilidade, exclusividade)));
                     } catch (Exception e) {
                         System.out.println("Linha de Livro inválida, pulando: " + e.getMessage());
                     }

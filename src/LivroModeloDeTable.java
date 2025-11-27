@@ -26,7 +26,7 @@ public class LivroModeloDeTable extends AbstractTableModel {
         switch (columnIndex){
             case 0: return livro.getTitulo();
             case 1: return livro.getAutor();
-            case 2: return livro.isDisponibilidade() ? "Sim" : "Não";
+            case 2: return livro.getDisponibilidade() ? "Sim" : "Não";
             default: return "";
         }
     }

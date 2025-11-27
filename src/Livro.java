@@ -2,11 +2,17 @@ public class Livro implements CSVGravavel {
     private String titulo;
     private String autor;
     private boolean disponibilidade;
+    private boolean exclusividade;
 
-    public Livro(String titulo, String autor, boolean disponibilidade) {
+    public Livro(String titulo, String autor, boolean disponibilidade, boolean exclusividade) {
         this.titulo = titulo;
         this.autor = autor;
         this.disponibilidade = disponibilidade;
+        this.exclusividade = exclusividade;
+    }
+
+    public void setExclusividade(boolean exclusividade){
+        this.exclusividade = exclusividade;
     }
 
     public void setTitulo(String titulo){
@@ -18,7 +24,10 @@ public class Livro implements CSVGravavel {
     }
 
     public void setDisponibilidade(boolean disponibilidade){
-        this.disponibilidade = disponibilidade;
+        if (this.exclusividade){
+            this.disponibilidade = disponibilidade;
+        }
+        else this.disponibilidade = true;
     }
 
     public String getTitulo(){
@@ -33,23 +42,31 @@ public class Livro implements CSVGravavel {
         return this.disponibilidade;
     }
 
-    public boolean isDisponibilidade(){
-        return this.disponibilidade;
+    public boolean getExclusividade(){
+        return this.exclusividade;
     }
 
     public String toString(){
-        if (getDisponibilidade()) return getTitulo() + "," + getAutor() + "," + "Disponível";
-        return getTitulo() + "," + getAutor() + "," + "Indisponível";
+        if (getDisponibilidade()){
+            if (getExclusividade()){
+                return getTitulo() + "," + getAutor() + "," + "Disponível" + "," + "Raro";
+            }
+            else return getTitulo() + "," + getAutor() + "," + "Disponível" + "," + "Comum";
+        }
+        if (getExclusividade()){
+            return getTitulo() + "," + getAutor() + "," + "Indisponível" + "," + "Raro";
+        }
+        return getTitulo() + "," + getAutor() + "," + "Indisponível" + "," + "Comum";
     }
 
     @Override
     public String toCSV() {
-        return getTitulo() + "," + getAutor() + "," + getDisponibilidade();
+        return getTitulo() + "," + getAutor() + "," + getDisponibilidade() + "," + getExclusividade();
     }
 
     @Override
     public String getCabecalhoCSV() {
-        return "Titulo,Autor,Disponibilidade";
+        return "Titulo,Autor,Disponibilidade,Exclusividade";
     }
 
 }

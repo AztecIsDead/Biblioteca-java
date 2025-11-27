@@ -76,7 +76,7 @@ public class LivroFormDialog extends JDialog{
         if (livro != null) {
             tfTitulo.setText(livro.getTitulo());
             tfAutor.setText(livro.getAutor());
-            cbDisponivel.setSelected(livro.isDisponibilidade());
+            cbDisponivel.setSelected(livro.getDisponibilidade());
         } else {
             tfTitulo.setText("");
             tfAutor.setText("");

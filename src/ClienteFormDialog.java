@@ -61,7 +61,7 @@ public class ClienteFormDialog extends JDialog {
         int idade = (Integer) spIdade.getValue();
         String senha = new String(pfSenha.getPassword());
         // cliente sempre criado sem livro alugado e sem devendo
-        return new Cliente(nome, idade, false, "Nenhum", senha);
+        return new Cliente(nome, idade, false, "Nenhum", senha, false);
     }
     private void onSave() {
         if (tfNome.getText().trim().isEmpty()) {

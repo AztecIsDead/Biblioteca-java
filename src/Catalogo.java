@@ -102,7 +102,7 @@ public class Catalogo {
         String titulo = scanner.nextLine();
         System.out.println("Digite o autor do livro:");
         String autor = scanner.nextLine();
-        Livro livro = new Livro(titulo, autor, true);
+        Livro livro = new Livro(titulo, autor, true, false);
         addLivro(livro);
         System.out.println("Livro registrado com sucesso!");
     }
@@ -146,7 +146,7 @@ public class Catalogo {
                 scanner.nextLine();
             }
         }
-        Cliente cliente = new Cliente(nome, idade, false, "Nenhum");
+        Cliente cliente = new Cliente(nome, idade, false, "Nenhum", "", false);
         addCliente(cliente);
         System.out.println("Cliente registrado com sucesso!");
     }
