@@ -4,6 +4,10 @@ import java.util.Optional;
 public class GUIService {
 
     private final BibliotecaServico svc;
+    public Optional<Evento> findEventoById(int id) {
+        return svc.findEventoById(id);
+    }
+
 
     public GUIService(BibliotecaServico svc) {
         this.svc = svc;
@@ -32,6 +36,7 @@ public class GUIService {
     public List<Evento> listarEventos() {
         return svc.repoEventos.findAll();
     }
+
     public List<Emprestimo> getEmprestimosDoCliente(int clienteId) {
         return svc.getEmprestimosDoCliente(clienteId);
     }
@@ -44,7 +49,6 @@ public class GUIService {
         return svc.adicionarLivro(titulo, autor, raro, totalCopias);
     }
 
-    // registrarCliente / registrarFuncionario agora recebem senha pura e svc NÃO vai hashear
     public Cliente registrarCliente(String nome, int idade, String usuario, String senha, Cliente.TipoCliente tipo, boolean aplicarHash) {
         return svc.registrarCliente(nome, idade, usuario, senha, tipo, aplicarHash);
     }
@@ -93,4 +97,22 @@ public class GUIService {
         list.add(f);
         svc.repoFuncionarios.salvarTodos(list);
     }
+
+    public Optional<String> inscreverEmEvento(int clienteId, int eventoId) {
+        return svc.inscreverClienteEvento(clienteId, eventoId);
+    }
+
+
+    public Optional<String> removerInscricaoEvento(int clienteId, int eventoId) {
+        return svc.removerInscricaoEvento(clienteId, eventoId);
+    }
+
+    public void adicionarEvento(Evento e) {
+        svc.adicionarEvento(e);
+    }
+
+    public void atualizarEvento(Evento e) {
+        svc.atualizarEvento(e);
+    }
+
 }

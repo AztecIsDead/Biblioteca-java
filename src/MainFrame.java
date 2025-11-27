@@ -38,6 +38,7 @@ public class MainFrame extends JFrame {
         btnSair.addActionListener(e -> System.exit(0));
     }
 
+
     public static void abrir(GUIService gui) {
         SwingUtilities.invokeLater(() -> new MainFrame(gui).setVisible(true));
     }

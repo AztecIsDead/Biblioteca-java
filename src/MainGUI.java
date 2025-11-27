@@ -100,6 +100,29 @@ public class MainGUI {
         tabs.addTab("Funcionários", panelFuncionarios);
         tabs.addTab("Requisições", panelReq);
         tabs.addTab("Empréstimos", panelEmp);
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu menuEventos = new JMenu("Eventos");
+
+        JMenuItem itemListar = new JMenuItem("Listar / Gerenciar");
+        JMenuItem itemNovo = new JMenuItem("Criar Evento");
+
+        itemListar.addActionListener(e -> {
+            PainelEventos painel = new PainelEventos(frame, gui);
+            painel.setVisible(true);
+            JOptionPane.showMessageDialog(frame, painel, "Eventos", JOptionPane.PLAIN_MESSAGE);
+        });
+
+        itemNovo.addActionListener(e -> {
+            EventoCrudDialog dlg = new EventoCrudDialog(frame, gui, null);
+            dlg.setVisible(true);
+        });
+
+        menuEventos.add(itemListar);
+        menuEventos.add(itemNovo);
+        menuBar.add(menuEventos);
+
+        frame.setJMenuBar(menuBar);
 
         frame.add(tabs, BorderLayout.CENTER);
 

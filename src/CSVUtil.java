@@ -80,4 +80,23 @@ public class CSVUtil {
             e.printStackTrace();
         }
     }
+    public static List<Integer> splitToIntList(String s) {
+        List<Integer> lista = new ArrayList<>();
+
+        if (s == null || s.isEmpty())
+            return lista;
+
+        String[] parts = s.split(",");
+
+        for (String p : parts) {
+            if (!p.isEmpty()) {
+                try {
+                    lista.add(Integer.parseInt(p.trim()));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        return lista;
+    }
+
 }

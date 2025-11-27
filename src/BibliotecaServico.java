@@ -244,4 +244,74 @@ public class BibliotecaServico {
     public Optional<Livro> findLivroById(String id) {
         return repoLivros.findById(id);
     }
+    public Optional<String> inscreverEmEvento(int clienteId, int eventoId) {
+        Optional<Cliente> c = repoClientes.findById(clienteId);
+        if (c.isEmpty()) return Optional.of("Cliente não encontrado");
+
+        List<Evento> eventos = repoEventos.findAll();
+        Optional<Evento> opt = eventos.stream().filter(e -> e.getId() == eventoId).findFirst();
+        if (opt.isEmpty()) return Optional.of("Evento não encontrado");
+
+        Evento ev = opt.get();
+
+        if (ev.getInscritos().contains(clienteId))
+            return Optional.of("Cliente já está inscrito");
+
+        if (ev.getInscritos().size() >= ev.getVagas())
+            return Optional.of("Evento lotado");
+
+        ev.getInscritos().add(clienteId);
+
+        repoEventos.salvarTodos(eventos);
+
+        List<Notificacao> ns = repoNotificacoes.findAll();
+        ns.add(new Notificacao(clienteId, "Inscrição confirmada no evento: " + ev.getNome()));
+        repoNotificacoes.salvarTodos(ns);
+
+        return Optional.empty();
+    }
+
+    public Optional<Evento> getEventoById(int id) {
+        return repoEventos.findAll().stream().filter(e -> e.getId() == id).findFirst();
+    }
+    public Optional<String> inscreverClienteEvento(int clienteId, int eventoId) {
+        Optional<Cliente> c = repoClientes.findById(clienteId);
+        if (c.isEmpty()) return Optional.of("Cliente não existe");
+
+        List<Evento> eventos = repoEventos.findAll();
+        Optional<Evento> opt = eventos.stream().filter(e -> e.getId() == eventoId).findFirst();
+        if (opt.isEmpty()) return Optional.of("Evento não encontrado");
+
+        Evento ev = opt.get();
+
+        boolean vip = c.get().isVip();
+        ev.inscreverCliente(clienteId, vip);
+
+        repoEventos.salvarTodos(eventos);
+        return Optional.empty();
+    }
+
+    public Optional<String> removerInscricaoEvento(int clienteId, int eventoId) {
+        List<Evento> eventos = repoEventos.findAll();
+        Optional<Evento> opt = eventos.stream().filter(e -> e.getId() == eventoId).findFirst();
+        if (opt.isEmpty()) return Optional.of("Evento não encontrado");
+
+        Evento ev = opt.get();
+        ev.removerCliente(clienteId);
+
+        repoEventos.salvarTodos(eventos);
+        return Optional.empty();
+    }
+    public void adicionarEvento(Evento e) {
+        repoEventos.save(e);
+    }
+
+    public void atualizarEvento(Evento e) {
+        repoEventos.update(e);
+    }
+    public Optional<Evento> findEventoById(int id) {
+        return repoEventos.findById(id);
+    }
+
+
 }
