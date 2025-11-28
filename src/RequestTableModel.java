@@ -29,13 +29,13 @@ public class RequestTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Requisicao r = dados.get(rowIndex);
 
-        switch (columnIndex) {
-            case 0: return r.getId();
-            case 1: return r.getLivroTitulo();
-            case 2: return r.getStatus();
-            case 3: return r.getData();
-        }
-        return null;
+        return switch (columnIndex) {
+            case 0 -> r.getId();
+            case 1 -> r.getLivroTitulo();
+            case 2 -> r.getStatus();
+            case 3 -> r.getData();
+            default -> null;
+        };
     }
 
     public void setDados(List<Requisicao> lista) {

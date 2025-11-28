@@ -38,9 +38,7 @@ public class CSVUtil {
         }
 
         campos.add(atual.toString());
-        for (int i = 0; i < campos.size(); i++) {
-            campos.set(i, campos.get(i).trim());
-        }
+        campos.replaceAll(String::trim);
         return campos.toArray(new String[0]);
     }
 
@@ -68,7 +66,7 @@ public class CSVUtil {
                 return;
             }
 
-            bw.write(objetos.get(0).getCabecalhoCSV());
+            bw.write(objetos.getFirst().getCabecalhoCSV());
             bw.newLine();
 
             for (CSVGravavel o : objetos) {

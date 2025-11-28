@@ -34,7 +34,7 @@ public abstract class RepositorioCSV<T> {
 
     protected void anexarLinha(String linha) {
         try {
-            Files.write(arquivo, Arrays.asList(linha), StandardOpenOption.APPEND);
+            Files.write(arquivo, Collections.singletonList(linha), StandardOpenOption.APPEND);
         } catch (IOException e) {
             throw new RuntimeException("Erro ao anexar ao arquivo: " + arquivo + " - " + e.getMessage(), e);
         }

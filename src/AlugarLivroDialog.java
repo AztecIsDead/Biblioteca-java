@@ -15,17 +15,7 @@ public class AlugarLivroDialog extends JDialog {
         setLayout(new BorderLayout(8, 8));
         setPreferredSize(new Dimension(600, 400));
 
-        RepositorioLivroCsv repo = new RepositorioLivroCsv("data/livros.csv");
-        Catalogo catalogo = new Catalogo(repo);
-
-        DefaultListModel<String> lm = new DefaultListModel<>();
-
-        java.util.List<Livro> livros = catalogo.getLivrosCadastrados();
-        if (livros == null || livros.isEmpty()) { livros = repo.findAll(); }
-
-        for (Livro l : livros) {
-            lm.addElement(l.getId() + " - " + l.getTitulo() + " (" + l.getAutor() + ") [disponíveis: " + l.getCopiasDisponiveis() + "]");
-        }
+        DefaultListModel<String> lm = getStringDefaultListModel();
 
         listaLivros = new JList<>(lm);
         listaLivros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -52,6 +42,21 @@ public class AlugarLivroDialog extends JDialog {
 
         pack();
         setLocationRelativeTo(getOwner());
+    }
+
+    private static DefaultListModel<String> getStringDefaultListModel() {
+        RepositorioLivroCsv repo = new RepositorioLivroCsv("data/livros.csv");
+        Catalogo catalogo = new Catalogo(repo);
+
+        DefaultListModel<String> lm = new DefaultListModel<>();
+
+        java.util.List<Livro> livros = catalogo.getLivrosCadastrados();
+        if (livros == null || livros.isEmpty()) { livros = repo.findAll(); }
+
+        for (Livro l : livros) {
+            lm.addElement(l.getId() + " - " + l.getTitulo() + " (" + l.getAutor() + ") [disponíveis: " + l.getCopiasDisponiveis() + "]");
+        }
+        return lm;
     }
 
     public boolean isConfirmado() { return confirmado; }

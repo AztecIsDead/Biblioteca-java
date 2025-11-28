@@ -122,31 +122,30 @@ public class BibliotecaServico {
         return Optional.empty();
     }
 
-    public Optional<String> processarRequisicao(String id, boolean aprovar) {
+    public void processarRequisicao(String id, boolean aprovar) {
         int idNum = Integer.parseInt(id);
 
         List<Requisicao> todas = repoRequisicoes.findAll();
         Optional<Requisicao> opt = todas.stream().filter(r -> r.getId() == idNum).findFirst();
-        if (opt.isEmpty()) return Optional.of("Requisição não encontrada");
+        if (opt.isEmpty()) return;
 
         Requisicao r = opt.get();
 
         if (!r.getStatus().equalsIgnoreCase("pendente"))
-            return Optional.of("Requisição já processada");
+            return;
 
         if (!aprovar) {
             r.setStatus("rejeitada");
             repoRequisicoes.salvarTodos(todas);
-            return Optional.empty();
+            return;
         }
 
         Optional<String> res = criarEmprestimo(r.getClienteId(), r.getLivroId());
-        if (res.isPresent()) return res;
+        if (res.isPresent()) return;
 
         r.setStatus("aprovada");
         repoRequisicoes.salvarTodos(todas);
 
-        return Optional.empty();
     }
 
     public Optional<String> criarEmprestimo(int clienteId, String livroId) {

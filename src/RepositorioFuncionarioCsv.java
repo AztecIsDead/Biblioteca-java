@@ -11,7 +11,7 @@ public class RepositorioFuncionarioCsv {
         List<Funcionario> out = new ArrayList<>();
         try {
             List<String[]> linhas = CSVUtil.lerCSV(arquivo);
-            if (linhas == null || linhas.isEmpty()) return out;
+            if (linhas.isEmpty()) return out;
             boolean primeira = true;
             for (String[] s : linhas) {
                 if (primeira) { primeira = false; continue; }
@@ -22,7 +22,7 @@ public class RepositorioFuncionarioCsv {
                     System.err.println("Linha de funcionario malformada: " + String.join(",", s));
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception _) {}
         return out;
     }
 
@@ -31,7 +31,7 @@ public class RepositorioFuncionarioCsv {
             if (lista == null || lista.isEmpty()) {
                 bw.write("");
             } else {
-                bw.write(lista.get(0).getCabecalhoCSV());
+                bw.write(lista.getFirst().getCabecalhoCSV());
                 bw.newLine();
                 for (Funcionario f : lista) { bw.write(f.toCSV()); bw.newLine(); }
             }

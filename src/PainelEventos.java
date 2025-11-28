@@ -103,7 +103,7 @@ public class PainelEventos extends JDialog {
 
             var res = guiService.inscreverEmEvento(clienteId, eventoId);
             JOptionPane.showMessageDialog(this,
-                    res.isPresent() ? res.get() : "Inscrito com sucesso!");
+                    res.orElse("Inscrito com sucesso!"));
 
             recarregarTabela();
 

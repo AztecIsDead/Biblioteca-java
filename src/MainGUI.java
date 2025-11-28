@@ -138,10 +138,6 @@ public class MainGUI {
             }
         });
 
-        // =============================
-        // 🔥 AQUI ESTAVA O ERRO — CORRIGIDO
-        // =============================
-
         btnEditarLivro.addActionListener(e -> {
             int sel = tblLivros.getSelectedRow();
             if (sel == -1) { JOptionPane.showMessageDialog(frame, "Selecione um livro."); return; }
@@ -166,7 +162,6 @@ public class MainGUI {
 
             boolean raro = ConfirmDialog.confirm(frame, "Marcar como raro?");
 
-            // NOVO LIVRO CORRIGIDO
             Livro atualizado = new Livro(
                     selecionado.getId(),
                     novoTitulo,

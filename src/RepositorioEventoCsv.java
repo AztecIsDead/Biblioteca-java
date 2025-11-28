@@ -24,7 +24,7 @@ public class RepositorioEventoCsv {
             }
 
             List<String[]> linhas = CSVUtil.lerCSV(arquivo);
-            if (linhas == null || linhas.isEmpty()) return out;
+            if (linhas.isEmpty()) return out;
 
             boolean primeira = true;
             for (String[] s : linhas) {
@@ -35,7 +35,7 @@ public class RepositorioEventoCsv {
 
                 try {
                     Evento ev = Evento.fromCSV(s);
-                    if (ev != null) out.add(ev);
+                    out.add(ev);
                 } catch (Exception ignored) {}
             }
 

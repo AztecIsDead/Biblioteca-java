@@ -21,7 +21,7 @@ public class RepositorioRequisicaoCsv {
         List<Requisicao> lista = new ArrayList<>();
         try {
             List<String[]> linhas = CSVUtil.lerCSV(arquivo);
-            if (linhas == null || linhas.isEmpty()) return lista;
+            if (linhas.isEmpty()) return lista;
             boolean primeira = true;
             for (String[] s : linhas) {
                 if (primeira) { primeira = false; continue; }
@@ -45,7 +45,7 @@ public class RepositorioRequisicaoCsv {
                 bw.newLine();
                 return;
             }
-            bw.write(lista.get(0).getCabecalhoCSV());
+            bw.write(lista.getFirst().getCabecalhoCSV());
             bw.newLine();
             for (Requisicao r : lista) {
                 bw.write(r.toCSV());

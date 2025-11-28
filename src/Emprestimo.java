@@ -88,7 +88,7 @@ public class Emprestimo implements CSVGravavel {
         LocalDate de = s.length > 3 && !s[3].isEmpty() ? LocalDate.parse(s[3]) : null;
         LocalDate dp = s.length > 4 && !s[4].isEmpty() ? LocalDate.parse(s[4]) : null;
         LocalDate dd = s.length > 5 && !s[5].isEmpty() ? LocalDate.parse(s[5]) : null;
-        boolean dev = s.length > 6 && !s[6].isEmpty() ? Boolean.parseBoolean(s[6]) : false;
+        boolean dev = s.length > 6 && !s[6].isEmpty() && Boolean.parseBoolean(s[6]);
         return new Emprestimo(id, clienteId, livroId, de, dp, dd, dev);
     }
 }

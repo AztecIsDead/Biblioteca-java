@@ -1,3 +1,3 @@
 id,nome,idade,usuario,senhaHash,cargo,dataAdmissao,minutosSessao
-1,Caius,20,aztectls,socorro,admin,2025-11-27,0
-2,Renan,20,serumano,cornoquecomepor3horas,admin,2025-11-27,0
+1,Caius,20,caius,senha,admin,2025-11-27,0
+2,Renan,20,renan,senha,admin,2025-11-27,0

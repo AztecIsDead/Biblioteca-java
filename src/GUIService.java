@@ -45,8 +45,8 @@ public class GUIService {
         return svc.repoNotificacoes.listarPorCliente(clienteId);
     }
 
-    public Livro adicionarLivro(String titulo, String autor, boolean raro, int totalCopias) {
-        return svc.adicionarLivro(titulo, autor, raro, totalCopias);
+    public void adicionarLivro(String titulo, String autor, boolean raro, int totalCopias) {
+        svc.adicionarLivro(titulo, autor, raro, totalCopias);
     }
 
     public Cliente registrarCliente(String nome, int idade, String usuario, String senha, Cliente.TipoCliente tipo, boolean aplicarHash) {

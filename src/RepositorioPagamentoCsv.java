@@ -10,13 +10,12 @@ public class RepositorioPagamentoCsv {
         List<Pagamento> out = new ArrayList<>();
         try {
             List<String[]> linhas = CSVUtil.lerCSV(arquivo);
-            if (linhas == null) return out;
             boolean primeira = true;
             for (String[] s : linhas) {
                 if (primeira) { primeira = false; continue; }
                 out.add(Pagamento.fromCSV(s));
             }
-        } catch (Exception e) {}
+        } catch (Exception _) {}
         return out;
     }
 

@@ -83,7 +83,7 @@ public class Evento implements CSVGravavel {
         if (inscritosVip.remove(Integer.valueOf(clienteId))) return;
         if (inscritosNormais.remove(Integer.valueOf(clienteId))) {
             if (!filaEspera.isEmpty()) {
-                int novo = filaEspera.remove(0);
+                int novo = filaEspera.removeFirst();
                 inscritosNormais.add(novo);
             }
             return;

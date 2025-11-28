@@ -26,12 +26,12 @@ public class FuncionarioTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (funcionarios == null) return "";
         Funcionario f = funcionarios.get(rowIndex);
-        switch (columnIndex) {
-            case 0: return f.getNome();
-            case 1: return f.getIdade();
-            case 2: return f.getCargo();
-            default: return "";
-        }
+        return switch (columnIndex) {
+            case 0 -> f.getNome();
+            case 1 -> f.getIdade();
+            case 2 -> f.getCargo();
+            default -> "";
+        };
     }
 
     @Override public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }

@@ -11,7 +11,6 @@ public class RepositorioEmprestimoCsv {
         List<Emprestimo> lista = new ArrayList<>();
         try {
             List<String[]> linhas = CSVUtil.lerCSV(arquivo);
-            if (linhas == null) return lista;
             boolean primeira = true;
             for (String[] s : linhas) {
                 if (primeira) { primeira = false; continue; }
@@ -19,15 +18,14 @@ public class RepositorioEmprestimoCsv {
                 Emprestimo e = Emprestimo.fromCSV(s);
                 lista.add(e);
             }
-        } catch (Exception ex) {}
+        } catch (Exception _) {}
         return lista;
     }
 
     public void salvarTodos(List<Emprestimo> lista) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo))) {
-            if (lista == null || lista.isEmpty()) {
-            } else {
-                bw.write(lista.get(0).getCabecalhoCSV());
+            if (!(lista.isEmpty())) {
+                bw.write(lista.getFirst().getCabecalhoCSV());
                 bw.newLine();
                 for (Emprestimo e : lista) { bw.write(e.toCSV()); bw.newLine(); }
             }

@@ -61,7 +61,7 @@ public abstract class RepositorioCsvBase<T extends CSVGravavel> {
             BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo));
 
             if (!lista.isEmpty()) {
-                bw.write(lista.get(0).getCabecalhoCSV());
+                bw.write(lista.getFirst().getCabecalhoCSV());
                 bw.newLine();
             }
 

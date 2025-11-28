@@ -17,15 +17,15 @@ public class EmprestimoTableModel extends AbstractTableModel {
     @Override public String getColumnName(int c) { return col[c]; }
     @Override public Object getValueAt(int row, int c) {
         Emprestimo e = dados.get(row);
-        switch (c) {
-            case 0: return e.getId();
-            case 1: return e.getClienteId();
-            case 2: return e.getLivroId();
-            case 3: return e.getDataEmprestimo() == null ? "" : e.getDataEmprestimo().format(fmt);
-            case 4: return e.getDataPrevista() == null ? "" : e.getDataPrevista().format(fmt);
-            case 5: return e.getDataDevolucao() == null ? "" : e.getDataDevolucao().format(fmt);
-            case 6: return e.isDevolvido();
-            default: return null;
-        }
+        return switch (c) {
+            case 0 -> e.getId();
+            case 1 -> e.getClienteId();
+            case 2 -> e.getLivroId();
+            case 3 -> e.getDataEmprestimo() == null ? "" : e.getDataEmprestimo().format(fmt);
+            case 4 -> e.getDataPrevista() == null ? "" : e.getDataPrevista().format(fmt);
+            case 5 -> e.getDataDevolucao() == null ? "" : e.getDataDevolucao().format(fmt);
+            case 6 -> e.isDevolvido();
+            default -> null;
+        };
     }
 }
