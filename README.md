@@ -31,9 +31,9 @@ do projeto.
 ```
 (Arquivo 'livros.csv' padrão do repositório)
 
-Titulo,Autor,Disponibilidade -- Cabeçalho
-1984,George Orwell,true -- Dados do Primeiro Livro registrado
-O Senhor dos Anéis,J. R. R. Tolkien,false -- Dados do Segundo Livro Registrado
+id,titulo,autor,raro,totalCopias,copiasDisponiveis -- Cabeçalho
+4,Dom Quixote,Miguel de Cervantes,false,3,3 -- Dados do Primeiro Livro registrado
+5,Crime e Castigo,Fiódor Dostoiévski,true,1,1 -- Dados do Segundo Livro Registrado
 (...)
 ```
 
