@@ -1,4 +1,4 @@
-#Executando o projeto:
+#Executando o projeto:#
 1. Requisitos
 
 Antes de rodar o sistema, confirme que você possui:
@@ -48,6 +48,6 @@ CSVs podem não carregar, tabelas podem aparecer vazias, handlers podem falhar, 
 Na IDE:
 
 Abra Main.java
-Clique em Run ▶
+Clique em Run 
 A tela inicial será exibida
 
