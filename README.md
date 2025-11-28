@@ -1,53 +1,81 @@
-#Executando o projeto:#
-1. Requisitos
+# Trabalho de POO (P2)
+Esse repositório contém o código do trabalho da disciplina Programação
+Orientada a Objetos (POO), equivalente à nota da avaliação P2,
+onde o nosso grupo ficou responsável por elaborar um
+sistema de gestão de uma biblioteca em Java.
 
-Antes de rodar o sistema, confirme que você possui:
+O Projeto não usa bibliotecas externas e tem interface feita em **Swing**.
 
-Java Development Kit (JDK) 17 ou superior
+## Como Usar:
+### Pré-Requisitos:
+- **Oracle Open JDK** versão **24.0.2** ou maior
 
-Para verificar sua versão:
-
-java -version
-
-IDE recomendada:
-
-IntelliJ IDEA
-
-Dependências externas:
-
-Nenhuma dependência externa é necessária, o projeto utiliza apenas a biblioteca padrão do Java (Swing + IO).
-
-2. Clonar o repositório
+### Clonando o Repositório:
+Execute o comando a seguir na linha de comando:
+``` 
 git clone https://github.com/AztecIsDead/Biblioteca-java.git
+cd BibliotecaJava
+```
+Em seguida, rode o arquivo `Main.java`.
 
-3. Abrir o projeto na IDE
+(Outros arquivos como o `SwingMain` não devem ser executados diretamente).
 
-Abra o IntelliJ IDEA 
+### Estrutura dos arquivos _.csv_:
+- O programa usa arquivos da extensão _**.csv**_ como forma de manter os dados
+  dos **Livros**, **Clientes**, **Funcionários**, etc.
 
-Vá em File → Open
 
-Selecione a pasta Biblioteca-java
+- O repositório contém arquivos de exemplo para demonstrar as funcionalidades
+do projeto.
 
-Aguarde a IDE indexar o projeto
+```
+(Arquivo 'livros.csv' padrão do repositório)
 
-#Localizar a classe principal (MAIN)
+Titulo,Autor,Disponibilidade -- Cabeçalho
+1984,George Orwell,true -- Dados do Primeiro Livro registrado
+O Senhor dos Anéis,J. R. R. Tolkien,false -- Dados do Segundo Livro Registrado
+(...)
+```
 
-O sistema deve ser iniciado exclusivamente pelo arquivo Main.java.
+### Logando no aplicativo:
+- Para usar o sistema, é necessário logar como 'Funcionário' ou 'Cliente'.
 
-Não execute os Dialogs diretamente
 
-O projeto contém várias telas (JDialogs, JFrames),
-mas nenhuma delas deve ser executada isoladamente.
+- Quando logando como funcionário, será constatado se o nome de usuário
+especificado está entre os registrados no arquivo `funcionarios.csv`
+para permitir acesso. Se o nome do funcionário não estiver no arquivo,
+será necessário informar um novo nome, usuário e senha para
+registrar um novo funcionário.
 
-Se você rodar qualquer tela separada:
-CSVs podem não carregar, tabelas podem aparecer vazias, handlers podem falhar, o programa abre sem estado inicial.
 
-#Somente o Main configura o ambiente correto para o sistema funcionar.
+- Para logar como cliente, o cliente precisa estar registrado no arquivo
+`clientes.csv` e deverá informar a sua senha.
+Caso o cliente tentando logar não esteja registrado no arquivo, será necessário
+informar um novo nome, login e senha para registrar o novo cliente.
 
-5. Executar o sistema
-Na IDE:
+## Funcionalidades:
+- O projeto permite aos clientes pedir permissão para alugar os livros
+disponíveis e permite que eles se registrem como novos clientes.
+Adicionalmente, clientes podem ser registrados como clientes VIP,
+que terão acesso a empréstimo de livros raros
+e vagas extras em eventos na biblioteca.
 
-Abra Main.java
-Clique em Run 
-A tela inicial será exibida
 
+- Para funcionários, o projeto permite vizualizar os livros da biblioteca,
+registrar novos livros e editar os existentes, registrar novos funcionários
+e clientes, além de vizualizar e autorizar ou recusar pedidos pendentes
+dos clientes.
+Funcionários também tem permissão para editar e criar eventos na biblioteca.
+O projeto também mapeia o tempo total de uso de cada funcionário no arquivo
+`sessions.csv` e exibe esse tempo na GUI.
+
+## INTEGRANTES:
+- [Caius Vinícius (Líder do Projeto)](https://github.com/AztecIsDead)
+- [José Victor Félix](https://github.com/josevictorcfelix)
+- [Renan Augusto](https://github.com/onamureS)
+- [Yan Magnum](https://github.com/Yan2423)
+- [Igor Paz](https://github.com/igupingu)
+---
+- Disciplina: Programação Orientada A Objetos
+- Professor: Samuel Oliveira
+- Instituto De Ensino Superior ICEV.
