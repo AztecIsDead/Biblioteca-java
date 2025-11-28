@@ -1,76 +1,53 @@
-# Trabalho de POO (P2)
-Esse repositório contém o código do trabalho da disciplina Programação
-Orientada a Objetos (POO), equivalente à nota da avaliação P2,
-onde o nosso grupo ficou responsável por elaborar um
-sistema de gestão de uma biblioteca em Java.
+#Executando o projeto:
+1. Requisitos
 
-O Projeto não usa bibliotecas externas e tem interface feita em **Swing**.
+Antes de rodar o sistema, confirme que você possui:
 
-## Como Usar:
-### Pré-Requisitos:
-- **Oracle Open JDK** versão **24.0.2** ou maior
+Java Development Kit (JDK) 17 ou superior
 
-### Clonando o Repositório:
-Execute o comando a seguir na linha de comando:
-``` 
+Para verificar sua versão:
+
+java -version
+
+IDE recomendada:
+
+IntelliJ IDEA
+
+Dependências externas:
+
+Nenhuma dependência externa é necessária, o projeto utiliza apenas a biblioteca padrão do Java (Swing + IO).
+
+2. Clonar o repositório
 git clone https://github.com/AztecIsDead/Biblioteca-java.git
-cd BibliotecaJava
-```
-Em seguida, rode o arquivo `SwingMain.java`
 
-### Estrutura dos arquivos _.csv_:
-- O programa usa arquivos da extensão _**.csv**_ como forma de manter os dados
-dos **Livros**, **Clientes**, **Funcionários**, etc.
+3. Abrir o projeto na IDE
 
+Abra o IntelliJ IDEA 
 
-- O repositório contém arquivos de exemplo para demonstrar as funcionalidades
-do projeto.
+Vá em File → Open
 
-```
-(Arquivo 'livros.csv' padrão do repositório)
+Selecione a pasta Biblioteca-java
 
-Titulo,Autor,Disponibilidade -- Cabeçalho
-1984,George Orwell,true -- Dados do Primeiro Livro registrado
-O Senhor dos Anéis,J. R. R. Tolkien,false -- Dados do Segundo Livro Registrado
-(...)
-```
+Aguarde a IDE indexar o projeto
 
-### Logando no aplicativo:
-- Para usar o sistema, é necessário logar como 'Funcionário' ou 'Cliente'.
+#Localizar a classe principal (MAIN)
 
+O sistema deve ser iniciado exclusivamente pelo arquivo Main.java.
 
-- Quando logando como funcionário, será constatado se o nome especificado
-está entre os registrados no arquivo `funcionarios.csv` para permitir acesso.
-A senha padrão para todos os funcionários é **'admin123'**. 
+Não execute os Dialogs diretamente
 
+O projeto contém várias telas (JDialogs, JFrames),
+mas nenhuma delas deve ser executada isoladamente.
 
-- Para logar como cliente, o cliente precisa estar registrado no arquivo
-`clientes.csv` e deverá informar a sua senha, que é diferente entre cada cliente.
+Se você rodar qualquer tela separada:
+CSVs podem não carregar, tabelas podem aparecer vazias, handlers podem falhar, o programa abre sem estado inicial.
 
+#Somente o Main configura o ambiente correto para o sistema funcionar.
 
-- Também é possível se registrar como novo cliente informando o seu nome, idade
-e a sua senha.
+5. Executar o sistema
+Na IDE:
 
-## Funcionalidades:
-- O projeto permite aos clientes pedir permissão para alugar os livros
-disponíveis e permite que eles se registrem como novos clientes.
+Abra Main.java
+Clique em Run ▶
+A tela inicial será exibida
 
-
-- Para funcionários, o projeto permite vizualizar os livros da biblioteca,
-registrar novos livros e editar os existentes, registrar novos funcionários
-e clientes, além de vizualizar e autorizar ou recusar pedidos pendentes
-dos clientes.
-O projeto também mapeia o tempo total de uso de cada funcionário no arquivo
-`sessions.csv` e exibe esse tempo na GUI.
-
-## INTEGRANTES:
-- [Caius Vinícius (Líder do Projeto)](https://github.com/AztecIsDead)
-- [José Victor Félix](https://github.com/josevictorcfelix)
-- [Renan Augusto](https://github.com/onamureS)
-- [Yan Magnum](https://github.com/Yan2423)
-- [Igor Paz](https://github.com/igupingu)
-
-
-- Disciplina: Programação Orientada A Objetos
-- Professor: Samuel Oliveira
-- Instituto De Ensino Superior ICEV.
